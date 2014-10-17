@@ -136,8 +136,14 @@
 (setq-default default-tab-width 2)
 (setq-default indent-tabs-mode nil)
 
-;; This gives you a tab of 2 spaces
-(custom-set-variables '(coffee-tab-width 2))
+(setq coffee-tab-width 2)
+(custom-set-variables
+ '(coffee-tab-width 2)
+ '(flycheck-coffeelintrc "~/.emacs.d/coffeelint.json"))
+
+(add-hook 'coffee-mode-hook 'flymake-mode)
+(add-hook 'coffee-mode-hook
+          'disable-electric-indent-mode)
 
 (require 'color-theme)
 (load-theme 'wombat t)

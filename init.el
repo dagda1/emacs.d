@@ -39,6 +39,7 @@
                      js2-mode
                      key-chord
                      smartparens
+                     jsx-mode
                      ag))
 
 ;; Allow hash to be entered
@@ -64,6 +65,9 @@
     (package-install package)))
 
 (require 'magit)
+
+(require 'jsx-mode)
+(add-to-list 'auto-mode-alist '("\\.jsx\\'" . jsx-mode))
 
 ;; Always ALWAYS use UTF-8
 (set-terminal-coding-system 'utf-8)

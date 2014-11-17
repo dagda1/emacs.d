@@ -40,11 +40,27 @@
                      key-chord
                      smartparens
                      jsx-mode
+                     ace-jump-mode
                      ag))
 
 ;; Allow hash to be entered
 (global-set-key (kbd "M-3") '(lambda () (interactive) (insert "#")))
 (tool-bar-mode -1)
+
+(autoload
+  'ace-jump-mode-pop-mark
+  "ace-jump-mode"
+  "Ace jump back:-)"
+  t)
+
+(define-key global-map (kbd "C-x SPC") 'ace-jump-mode-pop-mark)
+(autoload
+  'ace-jump-mode
+  "ace-jump-mode"
+  "Emacs quick move minor mode"
+  t)
+
+(define-key global-map (kbd "C-c SPC") 'ace-jump-mode)
 
 ; list the repositories containing them
 (add-to-list 'package-archives
@@ -76,20 +92,20 @@
 (load-library "iso-transl")
 
 ;; copy and paste
-(setq interprogram-cut-function 'paste-to-osx 
-      interprogram-paste-function 'copy-from-osx) 
+(setq interprogram-cut-function 'paste-to-osx
+      interprogram-paste-function 'copy-from-osx)
 
-(defun copy-from-osx () 
-  (let ((coding-system-for-read 'utf-8)) 
-    (shell-command-to-string "pbpaste"))) 
+(defun copy-from-osx ()
+  (let ((coding-system-for-read 'utf-8))
+    (shell-command-to-string "pbpaste")))
 
-(defun paste-to-osx (text &optional push) 
-  (let ((process-connection-type nil)) 
-    (let ((proc (start-process "pbcopy" "*Messages*" "pbcopy"))) 
-      (set-process-sentinel proc 'ignore) ;; stifle noise in *Messages* 
-      (process-send-string proc text) 
-      (process-send-eof proc))) 
-  text) 
+(defun paste-to-osx (text &optional push)
+  (let ((process-connection-type nil))
+    (let ((proc (start-process "pbcopy" "*Messages*" "pbcopy")))
+      (set-process-sentinel proc 'ignore) ;; stifle noise in *Messages*
+      (process-send-string proc text)
+      (process-send-eof proc)))
+  text)
 
 ;; Always ask for y/n keypress instead of typing out 'yes' or 'no'
 (defalias 'yes-or-no-p 'y-or-n-p)
@@ -251,6 +267,8 @@
 
 (when window-system (set-exec-path-from-shell-PATH))
 
+(setq ag-reuse-buffers 't)
+
 (global-set-key "%" 'match-paren)
 (defun match-paren (arg)
   "Go to the matching paren if on a paren; otherwise insert %."
@@ -332,34 +350,8 @@ activated as if nothing happened."
             (local-set-key (kbd "M-a") 'backward-sexp)
             (local-set-key (kbd "C-c C-S-v") 'cider-send-and-evaluate-sexp)))
 
-(defun paredit-delete-indentation (&optional arg)
-    "Handle joining lines that end in a comment."
-    (interactive "*P")
-    (let (comt)
-      (save-excursion
-        (move-beginning-of-line (if arg 1 0))
-        (when (skip
--syntax-forward "^<" (point-at-eol))
-          (setq comt (delete-and-extract-region (point) (point-at-eol)))))
-      (delete-indentation arg)
-      (when comt
-        (save-excursion
-          (move-end-of-line 1)
-          (insert " ")
-          (insert comt)))))
-
-  (defun paredit-remove-newlines ()
-    "Removes extras whitespace and newlines from the current point
-  to the next parenthesis."
-    (interactive)
-    (let ((up-to (point))
-          (from (re-search-forward "[])}]")))
-       (backward-char)
-       (while (> (point) up-to)
-         (paredit-delete-indentation))))
-
-  (define-key paredit-mode-map (kbd "C-^") 'paredit-remove-newlines)
-  (define-key paredit-mode-map (kbd "M-^") 'paredit-delete-indentation)
+(define-key paredit-mode-map (kbd "C-^") 'paredit-remove-newlines)
+(define-key paredit-mode-map (kbd "M-^") 'paredit-delete-indentation)
 
 (defun turn-on-paredit () (paredit-mode t))
 

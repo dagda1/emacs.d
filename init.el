@@ -277,22 +277,6 @@
         ((looking-at "\\s\)") (forward-char 1) (backward-list 1))
         (t (self-insert-command (or arg 1)))))
 
-(global-set-key (kbd "C->") 'vimmy-indent)
-(defun vimmy-indent ()
- (interactive)
- (indent-according-to-mode)
- (indent-rigidly
-   (region-beginning)
-   (region-end) 2))
-
-(global-set-key (kbd "C-<") 'vimmy-unindent)
-(defun vimmy-unindent ()
- (interactive)
- (indent-according-to-mode)
- (indent-rigidly
-   (region-beginning)
-   (region-end) -2))
-
 (global-set-key "\M-/" 'hippie-expand)
 ;; Append result of evaluating previous expression (Clojure):
 (defun cider-eval-last-sexp-and-append ()

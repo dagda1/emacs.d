@@ -347,6 +347,15 @@ activated as if nothing happened."
 (add-hook 'cider-repl-mode-hook       'turn-on-paredit)
 (add-hook 'sibiliant-mode-hook        'turn-on-paredit)
 
+(dolist (mode '(ruby coffee))
+  (add-hook (intern (format "%s-mode-hook" mode))
+            '(lambda ()
+               (add-to-list (make-local-variable 'paredit-space-for-delimiter-predicates)
+                            (lambda (_ _) nil))
+               (enable-paredit-mode))))
+
+(add-hook 'js2-mode-hook 'turn-on-paredit)
+
 (defvar electrify-return-match
     "[\]}\)\"]"
     "If this regexp matches the text after the cursor, do an \"electric\" return.")

@@ -192,10 +192,11 @@
 (provide 'prelude-ido)
 
 (require 'rainbow-delimiters)
-(global-rainbow-delimiters-mode t)
+(add-hook 'prog-mode-hook #'rainbow-delimiters-mode)
 
 ; (require 'icomplete)
-
+(require 'company)
+(global-company-mode 1)
 (add-hook 'after-init-hook #'global-flycheck-mode)
 (add-hook 'after-init-hook 'global-company-mode)
 

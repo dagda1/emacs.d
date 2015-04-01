@@ -327,6 +327,13 @@ activated as if nothing happened."
             (local-set-key (kbd "M-a") 'backward-sexp)
             (local-set-key (kbd "C-c C-S-v") 'cider-send-and-evaluate-sexp)))
 
+(defun my-paredit-nonlisp ()
+  "Turn on paredit mode for non-lisps."
+  (interactive)
+  (set (make-local-variable 'paredit-space-for-delimiter-predicates)
+       '((lambda (endp delimiter) nil)))
+  (paredit-mode 1))
+
 (define-key paredit-mode-map (kbd "C-^") 'paredit-remove-newlines)
 (define-key paredit-mode-map (kbd "M-^") 'paredit-delete-indentation)
 
@@ -339,6 +346,7 @@ activated as if nothing happened."
 (add-hook 'clojure-mode-hook          'turn-on-paredit)
 (add-hook 'cider-repl-mode-hook       'turn-on-paredit)
 (add-hook 'sibiliant-mode-hook        'turn-on-paredit)
+(add-hook 'js-mode-hook 'my-paredit-nonlisp)
 
 (dolist (mode '(ruby coffee))
   (add-hook (intern (format "%s-mode-hook" mode))

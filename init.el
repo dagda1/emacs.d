@@ -41,7 +41,8 @@
                      smartparens
                      jsx-mode
                      ace-jump-mode
-                     ag))
+                     ag
+                     ))
 
 ;; Allow hash to be entered
 (global-set-key (kbd "M-3") '(lambda () (interactive) (insert "#")))
@@ -106,6 +107,14 @@
       (process-send-string proc text)
       (process-send-eof proc)))
   text)
+
+;;; kill other buffers
+(defun kill-other-buffers ()
+    "Kill all other buffers."
+    (interactive)
+    (mapc 'kill-buffer
+          (delq (current-buffer)
+                (remove-if-not 'buffer-file-name (buffer-list)))))
 
 ;; Always ask for y/n keypress instead of typing out 'yes' or 'no'
 (defalias 'yes-or-no-p 'y-or-n-p)
@@ -439,6 +448,13 @@ activated as if nothing happened."
   (ad-activate '4clojure-open-question))
 
 (show-smartparens-global-mode +1)
+
+(defun beautify-json ()
+  (interactive)
+  (let ((b (if mark-active (min (point) (mark)) (point-min)))
+        (e (if mark-active (max (point) (mark)) (point-max))))
+    (shell-command-on-region b e
+     "python -mjson.tool" (current-buffer) t)))
 
 ;;set tab width globally
 (setq-default indent-tabs-mode nil)

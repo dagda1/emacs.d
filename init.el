@@ -456,6 +456,8 @@ activated as if nothing happened."
     (shell-command-on-region b e
      "python -mjson.tool" (current-buffer) t)))
 
+(setq company-dabbrev-downcase nil)
+
 ;;set tab width globally
 (setq-default indent-tabs-mode nil)
 (setq-default tab-width 2)

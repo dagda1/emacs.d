@@ -84,7 +84,8 @@
 (require 'magit)
 
 (require 'jsx-mode)
-(add-to-list 'auto-mode-alist '("\\.jsx\\'" . jsx-mode))
+(add-to-list 'auto-mode-alist '("\\.js?\\'" . jsx-mode))
+(setq jsx-indent-level 2)
 
 ;; Always ALWAYS use UTF-8
 (set-terminal-coding-system 'utf-8)
@@ -355,7 +356,7 @@ activated as if nothing happened."
 (add-hook 'clojure-mode-hook          'turn-on-paredit)
 (add-hook 'cider-repl-mode-hook       'turn-on-paredit)
 (add-hook 'sibiliant-mode-hook        'turn-on-paredit)
-(add-hook 'js-mode-hook 'my-paredit-nonlisp)
+(add-hook 'js-mode-hook               'turn-on-paredit)
 
 (dolist (mode '(ruby coffee))
   (add-hook (intern (format "%s-mode-hook" mode))

@@ -62,10 +62,6 @@
   "Emacs quick move minor mode"
   t)
 
-;; (add-to-list 'auto-mode-alist '("\\.js?\\'" . jsx-mode))
-;; (autoload 'jsx-mode "jsx-mode" "JSX mode" t)
-;; (setq jsx-indent-level 2)
-
 ;;set tab width globally
 (setq-default indent-tabs-mode nil)
 (setq-default tab-width 2)
@@ -80,7 +76,8 @@
   "This mode contains little helpers for js developement"
   nil
   ""
-  '(((kbd "{") . insert-js-block-parentheses)))
+  '(((kbd "{") . insert-js-block-parentheses)
+    ((kbd "'") . insert-js-closing-quote)))
 
 (defun insert-js-block-parentheses ()
   (interactive)
@@ -88,7 +85,14 @@
   (insert "}")
   (forward-char -1))
 
+(defun insert-js-closing-quote ()
+  (interactive)
+  (insert "'")
+  (insert "'")
+  (forward-char -1))
+
 (add-hook 'js2-mode-hook 'js-helpers-minor-mode)
+(add-hook 'coffee-mode-hook 'js-helpers-minor-mode)
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -201,10 +205,7 @@
 
 (setq coffee-tab-width 2)
 
-
 (add-hook 'coffee-mode-hook 'flymake-mode)
-(add-hook 'coffee-mode-hook
-          'disable-electric-indent-mode)
 
 (require 'color-theme)
 (load-theme 'wombat t)

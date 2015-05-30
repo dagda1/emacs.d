@@ -2,7 +2,6 @@
 ;; ; list the packages you want
 (setq package-list '(company
                      auto-complete
-                     autopair
                      ac-cider
                      cider
                      4clojure
@@ -44,6 +43,8 @@
                      ag
                      ))
 
+(add-to-list 'load-path "~/.emacs.d/vendor/")
+
 ;; Allow hash to be entered
 (global-set-key (kbd "M-3") '(lambda () (interactive) (insert "#")))
 (tool-bar-mode -1)
@@ -61,7 +62,29 @@
   "Emacs quick move minor mode"
   t)
 
+;; (require 'jsx-mode)
+;; (add-to-list 'auto-mode-alist '("\\.js?\\'" . jsx-mode))
+;; (setq jsx-indent-level 2)
+
+(autoload 'js2-mode "js2" nil t)
+(add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
+
 (define-key global-map (kbd "C-c SPC") 'ace-jump-mode)
+
+(define-minor-mode js-helpers-minor-mode
+  "This mode contains little helpers for C developement"
+  nil
+  ""
+  '(((kbd "{") . insert-js-block-parentheses))
+)
+
+(defun insert-js-block-parentheses ()
+  (interactive)
+  (insert "{")
+  (insert "}")
+  )
+
+(add-hook 'js2-mode-hook 'js-helpers-minor-mode)
 
 ; list the repositories containing them
 (add-to-list 'package-archives
@@ -82,10 +105,6 @@
     (package-install package)))
 
 (require 'magit)
-
-(require 'jsx-mode)
-(add-to-list 'auto-mode-alist '("\\.js?\\'" . jsx-mode))
-(setq jsx-indent-level 2)
 
 ;; Always ALWAYS use UTF-8
 (set-terminal-coding-system 'utf-8)
@@ -212,7 +231,6 @@
 
 ;; ruby config
 (require 'ag)
-; (autoload 'ruby-mode "ruby-mode" nil t)
 (require 'ruby-tools)
 (require 'ruby-end)
 
@@ -249,26 +267,9 @@
 
 ;; js config
 (setq js-indent-level 2)
-(add-to-list 'load-path "~/.emacs.d/vendor/")
 (require 'handlebars-mode)
 
-;; autopair
-(require 'autopair)
-
-(defvar autopair-modes '(r-mode ruby-mode coffee-mode js-mode))
-(defun turn-on-autopair-mode () (autopair-mode 1))
-(dolist (mode autopair-modes) (add-hook (intern (concat (symbol-name mode) "-hook")) 'turn-on-autopair-mode))
-
 (require 'paredit)
-(defadvice paredit-mode (around disable-autopairs-around (arg))
-  "Disable autopairs mode if paredit-mode is turned on"
-  ad-do-it
-  (if (null ad-return-value)
-      (autopair-mode 1)
-    (autopair-mode 0)
-    ))
-
-(ad-activate 'paredit-mode)
 
 ;; fix the PATH variable
 (defun set-exec-path-from-shell-PATH ()
@@ -292,8 +293,6 @@
 (with-current-buffer (current-buffer)
   (insert ";;=>"))
 (cider-interactive-eval-print last-sexp)))
-
-(require 'paredit)
 
 ; cider config
 (require 'cider)
@@ -337,17 +336,10 @@ activated as if nothing happened."
             (local-set-key (kbd "M-a") 'backward-sexp)
             (local-set-key (kbd "C-c C-S-v") 'cider-send-and-evaluate-sexp)))
 
-(defun my-paredit-nonlisp ()
-  "Turn on paredit mode for non-lisps."
-  (interactive)
-  (set (make-local-variable 'paredit-space-for-delimiter-predicates)
-       '((lambda (endp delimiter) nil)))
-  (paredit-mode 1))
+(defun turn-on-paredit () (paredit-mode t))
 
 (define-key paredit-mode-map (kbd "C-^") 'paredit-remove-newlines)
 (define-key paredit-mode-map (kbd "M-^") 'paredit-delete-indentation)
-
-(defun turn-on-paredit () (paredit-mode t))
 
 (add-hook 'emacs-lisp-mode-hook       'turn-on-paredit)
 (add-hook 'lisp-mode-hook             'turn-on-paredit)
@@ -356,34 +348,13 @@ activated as if nothing happened."
 (add-hook 'clojure-mode-hook          'turn-on-paredit)
 (add-hook 'cider-repl-mode-hook       'turn-on-paredit)
 (add-hook 'sibiliant-mode-hook        'turn-on-paredit)
-(add-hook 'js-mode-hook               'turn-on-paredit)
 
-(dolist (mode '(ruby coffee))
+(dolist (mode '(ruby coffee js2))
   (add-hook (intern (format "%s-mode-hook" mode))
             '(lambda ()
                (add-to-list (make-local-variable 'paredit-space-for-delimiter-predicates)
                             (lambda (_ _) nil))
                (enable-paredit-mode))))
-
-(add-hook 'js2-mode-hook 'turn-on-paredit)
-
-(defvar electrify-return-match
-    "[\]}\)\"]"
-    "If this regexp matches the text after the cursor, do an \"electric\" return.")
-
-(defun electrify-return-if-match (arg)
-    "If the text after the cursor matches `electrify-return-match' then
-  open and indent an empty line between the cursor and the text.  Move the
-  cursor to the new line."
-    (interactive "P")
-    (let ((case-fold-search nil))
-      (if (looking-at electrify-return-match)
-          (save-excursion (newline-and-indent)))
-      (newline arg)
-      (indent-according-to-mode)))
-(add-hook 'paredit-mode-hook
-        (lambda ()
-          (local-set-key (kbd "RET") 'electrify-return-if-match)))
 
 (require 'ac-cider)
 (add-hook 'cider-mode-hook 'ac-flyspell-workaround)
@@ -462,7 +433,6 @@ activated as if nothing happened."
 ;;set tab width globally
 (setq-default indent-tabs-mode nil)
 (setq-default tab-width 2)
-(setq js-indent-level 2)
 (setq css-indent-offset 2)
 (provide 'init)
 ;;; init.el ends here

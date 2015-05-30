@@ -62,9 +62,14 @@
   "Emacs quick move minor mode"
   t)
 
-;; (require 'jsx-mode)
 ;; (add-to-list 'auto-mode-alist '("\\.js?\\'" . jsx-mode))
+;; (autoload 'jsx-mode "jsx-mode" "JSX mode" t)
 ;; (setq jsx-indent-level 2)
+
+;;set tab width globally
+(setq-default indent-tabs-mode nil)
+(setq-default tab-width 2)
+(setq css-indent-offset 2)
 
 (autoload 'js2-mode "js2" nil t)
 (add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
@@ -72,19 +77,28 @@
 (define-key global-map (kbd "C-c SPC") 'ace-jump-mode)
 
 (define-minor-mode js-helpers-minor-mode
-  "This mode contains little helpers for C developement"
+  "This mode contains little helpers for js developement"
   nil
   ""
-  '(((kbd "{") . insert-js-block-parentheses))
-)
+  '(((kbd "{") . insert-js-block-parentheses)))
 
 (defun insert-js-block-parentheses ()
   (interactive)
   (insert "{")
   (insert "}")
-  )
+  (forward-char -1))
 
 (add-hook 'js2-mode-hook 'js-helpers-minor-mode)
+
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(coffee-tab-width 2 t)
+ '(flycheck-coffeelintrc "~/.emacs.d/coffeelint.json")
+ '(js2-basic-offset 2)
+ '(js2-bounce-indent-p nil))
 
 ; list the repositories containing them
 (add-to-list 'package-archives
@@ -186,9 +200,7 @@
 (setq-default indent-tabs-mode nil)
 
 (setq coffee-tab-width 2)
-(custom-set-variables
- '(coffee-tab-width 2)
- '(flycheck-coffeelintrc "~/.emacs.d/coffeelint.json"))
+
 
 (add-hook 'coffee-mode-hook 'flymake-mode)
 (add-hook 'coffee-mode-hook
@@ -266,7 +278,6 @@
 (add-hook 'enh-ruby-mode-hook 'minitest-mode)
 
 ;; js config
-(setq js-indent-level 2)
 (require 'handlebars-mode)
 
 (require 'paredit)
@@ -430,10 +441,12 @@ activated as if nothing happened."
 
 (setq company-dabbrev-downcase nil)
 
-;;set tab width globally
-(setq-default indent-tabs-mode nil)
-(setq-default tab-width 2)
-(setq css-indent-offset 2)
 (provide 'init)
 ;;; init.el ends here
 
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )

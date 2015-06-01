@@ -72,7 +72,7 @@
 
 (define-key global-map (kbd "C-c SPC") 'ace-jump-mode)
 
-(define-minor-mode js-helpers-minor-mode
+(define-minor-mode pair-helpers-minor-mode
   "This mode contains little helpers for js developement"
   nil
   ""
@@ -91,8 +91,9 @@
   (insert "'")
   (forward-char -1))
 
-(add-hook 'js2-mode-hook 'js-helpers-minor-mode)
-(add-hook 'coffee-mode-hook 'js-helpers-minor-mode)
+(add-hook 'js2-mode-hook 'pair-helpers-minor-mode)
+(add-hook 'coffee-mode-hook 'pair-helpers-minor-mode)
+(add-hook 'ruby-mode-hook 'pair-helpers-minor-mode)
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.

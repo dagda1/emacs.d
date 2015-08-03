@@ -4,7 +4,6 @@
                      auto-complete
                      ac-cider
                      cider
-                     4clojure
                      clojure-mode
                      clojure-cheatsheet
                      clojure-snippets
@@ -30,7 +29,6 @@
                      magit
                      git-gutter
                      gist
-                     magit
                      minitest
                      rbenv
                      smex
@@ -41,6 +39,7 @@
                      jsx-mode
                      ace-jump-mode
                      ag
+                     elm-mode
                      ))
 
 (add-to-list 'load-path "~/.emacs.d/vendor/")
@@ -124,6 +123,12 @@
     (package-install package)))
 
 (require 'magit)
+; magit configuration
+(setq magit-push-always-verify nil)
+
+; elm configuration
+(require 'elm-mode)
+(setq elm-indent-offset 2)
 
 ;; Always ALWAYS use UTF-8
 (set-terminal-coding-system 'utf-8)
@@ -362,7 +367,7 @@ activated as if nothing happened."
 (add-hook 'cider-repl-mode-hook       'turn-on-paredit)
 (add-hook 'sibiliant-mode-hook        'turn-on-paredit)
 
-(dolist (mode '(ruby coffee js2))
+(dolist (mode '(ruby coffee js2 elm))
   (add-hook (intern (format "%s-mode-hook" mode))
             '(lambda ()
                (add-to-list (make-local-variable 'paredit-space-for-delimiter-predicates)
@@ -373,64 +378,6 @@ activated as if nothing happened."
 (add-hook 'cider-mode-hook 'ac-flyspell-workaround)
 (add-hook 'cider-mode-hook 'ac-cider-setup)
 (add-hook 'cider-repl-mode-hook 'ac-cider-setup)
-
-(when (package-installed-p '4clojure)
-  (defadvice 4clojure-open-question (around 4clojure-open-question-around)
-    "Start a cider/nREPL connection if one hasn't already been started when
-    opening 4clojure questions."
-    ad-do-it
-    (unless cider-current-clojure-buffer
-      (cider-jack-in)))
-
-   (define-key clojure-mode-map (kbd "<f2> a") '4clojure-check-answers)
-   (define-key clojure-mode-map (kbd "<f2> n") '4clojure-next-question)
-   (define-key clojure-mode-map (kbd "<f2> p") '4clojure-previous-question))
-
-(defvar ha-4clojure-place-file (concat user-emacs-directory "4clojure-place.txt"))
-
-(defun ha-file-to-string (file)
-  "Read the contents of FILE and return as a string."
-  (with-temp-buffer
-    (insert-file-contents file)
-    (buffer-substring-no-properties (point-min) (point-max))))
-
-(defun ha-file-to-list (file)
-  "Return a list of lines in FILE."
-  (split-string (ha-file-to-string file) "\n" t))
-
-(defun ha-4clojure-last-project (file)
-  (interactive "f")
-  (if (file-exists-p file)
-      (car (ha-file-to-list file))
-    "1"))
-
-(defun 4clojure-start-session ()
-  (interactive)
-  (4clojure-login "dagda1")
-  (4clojure-open-question
-   (ha-4clojure-last-project ha-4clojure-place-file)))
-
-(global-set-key (kbd "<f2> s") '4clojure-start-session)
-
-(defun ha-string-to-file (string file)
-  (interactive "sEnter the string: \nFFile to save to: ")
-  (with-temp-file file
-    (insert string)))
-
-(when (package-installed-p '4clojure)
-  (defun ha-4clojure-store-place (num)
-      (ha-string-to-file (int-to-string num) ha-4clojure-place-file))
-
-  (defadvice 4clojure-next-question (after ha-4clojure-next-question)
-    "Save the place for each question you progress to."
-    (ha-4clojure-store-place (4clojure/problem-number-of-current-buffer)))
-
-  (defadvice 4clojure-open-question (after ha-4clojure-next-question)
-    "Save the place for each question you progress to."
-    (ha-4clojure-store-place (4clojure/problem-number-of-current-buffer)))
-
-  (ad-activate '4clojure-next-question)
-  (ad-activate '4clojure-open-question))
 
 (show-smartparens-global-mode +1)
 

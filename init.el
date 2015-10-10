@@ -93,12 +93,14 @@
   (insert "'")
   (forward-char -1))
 
-(setq js-indent-level 2)
-
 (add-hook 'js2-mode-hook 'pair-helpers-minor-mode)
 (add-hook 'coffee-mode-hook 'pair-helpers-minor-mode)
 (add-hook 'ruby-mode-hook 'pair-helpers-minor-mode)
-(add-hook 'json-hook 'pair-helpers-minor-mode)
+(add-hook 'json-mode-hook 'pair-helpers-minor-mode)
+(add-hook 'jsx-mode-hook 'pair-helpers-minor-mode)
+
+(setq js-indent-level 2)
+(setq jsx-indent-level 2)
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -344,7 +346,7 @@
 (add-hook 'cider-repl-mode-hook       'turn-on-paredit)
 (add-hook 'sibiliant-mode-hook        'turn-on-paredit)
 
-(dolist (mode '(ruby coffee js2 elm))
+(dolist (mode '(ruby coffee js2 elm jsx json))
   (add-hook (intern (format "%s-mode-hook" mode))
             '(lambda ()
                (add-to-list (make-local-variable 'paredit-space-for-delimiter-predicates)

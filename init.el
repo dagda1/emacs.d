@@ -40,6 +40,7 @@
                      ag
                      elm-mode
                      org
+                     less-css-mode
                      ))
 
 (add-to-list 'load-path "~/.emacs.d/vendor/")
@@ -292,6 +293,8 @@
 (add-hook 'enh-ruby-mode-hook 'minitest-mode)
 
 (require 'handlebars-mode)
+
+(require 'less-css-mode)
 
 (require 'paredit)
 

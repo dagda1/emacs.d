@@ -1,8 +1,7 @@
 (require 'package)
-;; ; list the packages you want
+
 (setq package-list '(company
                      auto-complete
-                     ac-cider
                      cider
                      clojure-mode
                      clojure-cheatsheet
@@ -12,7 +11,7 @@
                      elein
                      paredit
                      popup
-                     rainbow-delimiters  ;; Mode for alternating paren colors
+                     rainbow-delimiters
                      rainbow-mode
                      color-theme
                      zenburn-theme
@@ -40,9 +39,13 @@
                      ace-jump-mode
                      ag
                      elm-mode
+                     org
                      ))
 
 (add-to-list 'load-path "~/.emacs.d/vendor/")
+
+(add-to-list 'auto-mode-alist '("\\.jsx\\'" . jsx-mode))
+(autoload 'jsx-mode "jsx-mode" "JSX mode" t)
 
 ;; Allow hash to be entered
 (global-set-key (kbd "M-3") '(lambda () (interactive) (insert "#")))
@@ -90,9 +93,12 @@
   (insert "'")
   (forward-char -1))
 
+(setq js-indent-level 2)
+
 (add-hook 'js2-mode-hook 'pair-helpers-minor-mode)
 (add-hook 'coffee-mode-hook 'pair-helpers-minor-mode)
 (add-hook 'ruby-mode-hook 'pair-helpers-minor-mode)
+(add-hook 'json-hook 'pair-helpers-minor-mode)
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -242,7 +248,6 @@
 (require 'rainbow-delimiters)
 (add-hook 'prog-mode-hook #'rainbow-delimiters-mode)
 
-; (require 'icomplete)
 (require 'company)
 (global-company-mode 1)
 (add-hook 'after-init-hook #'global-flycheck-mode)
@@ -284,7 +289,6 @@
 
 (add-hook 'enh-ruby-mode-hook 'minitest-mode)
 
-;; js config
 (require 'handlebars-mode)
 
 (require 'paredit)
@@ -300,17 +304,6 @@
 (setq ag-reuse-buffers 't)
 
 (global-set-key "\M-/" 'hippie-expand)
-;; Append result of evaluating previous expression (Clojure):
-(defun cider-eval-last-sexp-and-append ()
-  "Evaluate the expression preceding point and append result."
-  (interactive)
-  (let ((last-sexp (cider-last-sexp)))
-
-;; we have to be sure the evaluation won't result in an error
-(cider-eval-and-get-value last-sexp)
-(with-current-buffer (current-buffer)
-  (insert ";;=>"))
-(cider-interactive-eval-print last-sexp)))
 
 ; cider config
 (require 'cider)
@@ -322,7 +315,6 @@
 (define-key clojure-mode-map (kbd "C-o y") 'cider-eval-last-sexp-and-append)
 
 (add-hook 'prog-mode-hook  'rainbow-delimiters-mode)
-(add-hook 'cider-repl-mode-hook 'rainbow-delimiters-mode)
 
 (define-clojure-indent
   (defroutes 'defun)
@@ -334,25 +326,10 @@
   (ANY 2)
   (context 2))
 
-(defun cider-send-and-evaluate-sexp ()
-   "Sends the s-expression located before the point or the active
-region to the REPL and evaluates it. Then the Clojure buffer is
-activated as if nothing happened."
-   (interactive)
-   (if (not (region-active-p))
-       (cider-insert-last-sexp-in-repl)
-     (cider-insert-in-repl
-      (buffer-substring (region-beginning) (region-end)) nil))
-   (cider-switch-to-repl-buffer)
-   (cider-repl-closing-return)
-   (cider-switch-to-last-clojure-buffer)
-   (message ""))
-
 (add-hook 'clojure-mode-hook
           (lambda ()
             (local-set-key (kbd "M-e") 'forward-sexp)
-            (local-set-key (kbd "M-a") 'backward-sexp)
-            (local-set-key (kbd "C-c C-S-v") 'cider-send-and-evaluate-sexp)))
+            (local-set-key (kbd "M-a") 'backward-sexp)))
 
 (defun turn-on-paredit () (paredit-mode t))
 
@@ -374,11 +351,6 @@ activated as if nothing happened."
                             (lambda (_ _) nil))
                (enable-paredit-mode))))
 
-(require 'ac-cider)
-(add-hook 'cider-mode-hook 'ac-flyspell-workaround)
-(add-hook 'cider-mode-hook 'ac-cider-setup)
-(add-hook 'cider-repl-mode-hook 'ac-cider-setup)
-
 (show-smartparens-global-mode +1)
 
 (defun beautify-json ()
@@ -391,11 +363,5 @@ activated as if nothing happened."
 (setq company-dabbrev-downcase nil)
 
 (provide 'init)
-;;; init.el ends here
 
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
+(put 'downcase-region 'disabled nil)

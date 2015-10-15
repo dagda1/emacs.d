@@ -281,6 +281,15 @@
 (require 'minitest)
 (add-hook 'ruby-mode-hook 'minitest-mode)
 
+(defun cowboyd-minitest-setup-env (do-run &rest arguments)
+  "Use Bash for minitest to avoid Zsh issues. Also, activate rbenv ruby if
+necessary"
+  (let ((shell-file-name "/bin/bash"))
+    (rbenv-use-corresponding)
+    (apply do-run arguments)))
+
+(advice-add 'minitest--run-command :around #'cowboyd-minitest-setup-env)
+
 (require 'rbenv)
 (global-rbenv-mode)
 (rbenv-use-global)

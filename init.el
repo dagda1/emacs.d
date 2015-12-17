@@ -3,13 +3,12 @@
 (setq package-list '(company
                      auto-complete
                      cider
+                     csharp-mode
                      clojure-mode
-                     clojure-cheatsheet
-                     clojure-snippets
                      clojurescript-mode
-                     clj-refactor
                      elein
                      paredit
+                     paredit-everywhere
                      popup
                      rainbow-delimiters
                      rainbow-mode
@@ -48,6 +47,14 @@
 (add-to-list 'auto-mode-alist '("\\.jsx\\'" . jsx-mode))
 (autoload 'jsx-mode "jsx-mode" "JSX mode" t)
 
+(setq visible-bell nil) ;; The default
+(setq ring-bell-function 'ignore)
+
+(defun my-csharp-mode-hook ()
+  ;; enable the stuff you want for C# here
+  (electric-pair-mode 1))
+(add-hook 'csharp-mode-hook 'my-csharp-mode-hook)
+
 ;; Allow hash to be entered
 (global-set-key (kbd "M-3") '(lambda () (interactive) (insert "#")))
 (tool-bar-mode -1)
@@ -69,6 +76,10 @@
 (setq-default indent-tabs-mode nil)
 (setq-default tab-width 2)
 (setq css-indent-offset 2)
+
+(setq auto-mode-alist (cons '("\\.v$" . coq-mode) auto-mode-alist))
+  (autoload 'coq-mode "coq" "Major mode for editing Coq vernacular." t)
+(load-file "/usr/local/share/emacs/site-lisp/proof-general/generic/proof-site.el")
 
 (autoload 'js2-mode "js2" nil t)
 (add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))

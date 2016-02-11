@@ -1,6 +1,3 @@
-;;; Commentary:
-;; stop the warning
-
 (require 'package)
 
 (setq package-list '(company
@@ -53,6 +50,13 @@
 
 (setq visible-bell nil) ;; The default
 (setq ring-bell-function 'ignore)
+
+(with-eval-after-load 'flycheck
+  (setq-default flycheck-disabled-checkers '(emacs-lisp-checkdoc javascript-jshint)))
+
+(when (eq system-type 'darwin)
+  (require 'ls-lisp)
+  (setq ls-lisp-use-insert-directory-program nil))
 
 (defun my-csharp-mode-hook ()
   ;; enable the stuff you want for C# here

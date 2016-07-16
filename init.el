@@ -42,17 +42,26 @@
                      org
                      less-css-mode
                      exec-path-from-shell
+                     haskell-mode
                      ))
 
 (add-to-list 'load-path "~/.emacs.d/vendor/")
 
-(add-to-list 'auto-mode-alist '("\\.jsx$" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.js$" . web-mode))
 
 (setq visible-bell nil) ;; The default
 (setq ring-bell-function 'ignore)
 
-(with-eval-after-load 'flycheck
-  (setq-default flycheck-disabled-checkers '(emacs-lisp-checkdoc javascript-jshint)))
+(setq web-mode-content-types-alist
+      '(("jsx" . "\\.js[x]?\\'")))
+
+(eval-after-load 'haskell-mode
+  '(define-key haskell-mode-map (kbd "C-c C-o") 'haskell-compile))
+(eval-after-load 'haskell-cabal
+  '(define-key haskell-cabal-mode-map (kbd "C-c C-o") 'haskell-compile))
+
+;; (with-eval-after-load 'flycheck
+;;   (setq-default flycheck-disabled-checkers '(emacs-lisp-checkdoc javascript-jshint)))
 
 (when (eq system-type 'darwin)
   (require 'ls-lisp)
@@ -62,6 +71,8 @@
   ;; enable the stuff you want for C# here
   (electric-pair-mode 1))
 (add-hook 'csharp-mode-hook 'my-csharp-mode-hook)
+
+(custom-set-variables '(haskell-process-type 'stack-ghci))
 
 ;; Allow hash to be entered
 (global-set-key (kbd "M-3") '(lambda () (interactive) (insert "#")))

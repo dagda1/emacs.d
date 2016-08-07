@@ -3,7 +3,6 @@
 (setq package-list '(company
                      auto-complete
                      cider
-                     csharp-mode
                      clojure-mode
                      clojurescript-mode
                      elein
@@ -47,30 +46,13 @@
 
 (add-to-list 'load-path "~/.emacs.d/vendor/")
 
-(add-to-list 'auto-mode-alist '("\\.js$" . web-mode))
-
 (setq visible-bell nil) ;; The default
 (setq ring-bell-function 'ignore)
-
-(setq web-mode-content-types-alist
-      '(("jsx" . "\\.js[x]?\\'")))
 
 (eval-after-load 'haskell-mode
   '(define-key haskell-mode-map (kbd "C-c C-o") 'haskell-compile))
 (eval-after-load 'haskell-cabal
   '(define-key haskell-cabal-mode-map (kbd "C-c C-o") 'haskell-compile))
-
-;; (with-eval-after-load 'flycheck
-;;   (setq-default flycheck-disabled-checkers '(emacs-lisp-checkdoc javascript-jshint)))
-
-(when (eq system-type 'darwin)
-  (require 'ls-lisp)
-  (setq ls-lisp-use-insert-directory-program nil))
-
-(defun my-csharp-mode-hook ()
-  ;; enable the stuff you want for C# here
-  (electric-pair-mode 1))
-(add-hook 'csharp-mode-hook 'my-csharp-mode-hook)
 
 (custom-set-variables '(haskell-process-type 'stack-ghci))
 
@@ -100,8 +82,12 @@
   (autoload 'coq-mode "coq" "Major mode for editing Coq vernacular." t)
 (load-file "/usr/local/share/emacs/site-lisp/proof-general/generic/proof-site.el")
 
-(autoload 'js2-mode "js2" nil t)
-(add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
+
+;; js2-mode for JavaScript (and React´s JSX)
+(add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
+(add-to-list 'auto-mode-alist '("\\.js?\\'" . js2-jsx-mode))
+(add-to-list 'interpreter-mode-alist '("node" . js2-mode))
+(add-to-list 'interpreter-mode-alist '("node" . js2-jsx-mode))
 
 (define-key global-map (kbd "C-c SPC") 'ace-jump-mode)
 
@@ -295,8 +281,6 @@
 (setq-default flycheck-disabled-checkers
               (append flycheck-disabled-checkers
                       '(javascript-jshint)))
-;; use eslint with web-mode for jsx files
-(flycheck-add-mode 'javascript-eslint 'web-mode)
 
 ;; customize flycheck temp file prefix
 (setq-default flycheck-temp-prefix ".flycheck")
@@ -305,20 +289,8 @@
   (append flycheck-disabled-checkers
     '(json-jsonlist)))
 
-;; adjust indents for web-mode to 2 spaces
-(defun my-web-mode-hook ()
-  "Hooks for Web mode. Adjust indents"
-  ;;; http://web-mode.org/
-  (setq web-mode-markup-indent-offset 2)
-  (setq web-mode-css-indent-offset 2)
-  (setq web-mode-code-indent-offset 2))
-(add-hook 'web-mode-hook  'my-web-mode-hook)
-
-(defadvice web-mode-highlight-part (around tweak-jsx activate)
-  (if (equal web-mode-content-type "jsx")
-    (let ((web-mode-enable-part-face nil))
-      ad-do-it)
-    ad-do-it))
+(flycheck-add-mode 'javascript-eslint 'js2-mode)
+(flycheck-add-mode 'javascript-eslint 'js2-jsx-mode)
 
 ;; ruby config
 (require 'ag)

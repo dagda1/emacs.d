@@ -37,12 +37,9 @@
                      json-mode
                      ace-jump-mode
                      ag
-                     elm-mode
                      org
-                     less-css-mode
                      exec-path-from-shell
-                     haskell-mode
-                     ))
+                     haskell-mode                     ))
 
 (add-to-list 'load-path "~/.emacs.d/vendor/")
 
@@ -115,6 +112,7 @@
 (add-hook 'ruby-mode-hook 'pair-helpers-minor-mode)
 (add-hook 'json-mode-hook 'pair-helpers-minor-mode)
 (add-hook 'jsx-mode-hook 'pair-helpers-minor-mode)
+(add-hook 'haskell-mode-hoo 'pair-helpers-minor-mode)
 
 (setq js-indent-level 2)
 (setq jsx-indent-level 2)
@@ -150,10 +148,6 @@
 (require 'magit)
 ; magit configuration
 (setq magit-push-always-verify nil)
-
-; elm configuration
-(require 'elm-mode)
-(setq elm-indent-offset 2)
 
 ;; Always ALWAYS use UTF-8
 (set-terminal-coding-system 'utf-8)
@@ -339,8 +333,6 @@ necessary"
 
 (require 'handlebars-mode)
 
-(require 'less-css-mode)
-
 (require 'paredit)
 
 (setq exec-path-from-shell-check-startup-files nil)
@@ -390,7 +382,7 @@ necessary"
 (add-hook 'cider-repl-mode-hook       'turn-on-paredit)
 (add-hook 'sibiliant-mode-hook        'turn-on-paredit)
 
-(dolist (mode '(ruby coffee js2 elm jsx json))
+(dolist (mode '(ruby coffee js2 jsx json))
   (add-hook (intern (format "%s-mode-hook" mode))
             '(lambda ()
                (add-to-list (make-local-variable 'paredit-space-for-delimiter-predicates)

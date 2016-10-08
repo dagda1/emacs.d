@@ -52,6 +52,15 @@
 
 (custom-set-variables '(haskell-process-type 'stack-ghci))
 
+;;set tab width globally
+(setq-default indent-tabs-mode nil)
+(setq-default tab-width 2)
+(setq css-indent-offset 2)
+
+(setq auto-mode-alist (cons '("\\.v$" . coq-mode) auto-mode-alist))
+  (autoload 'coq-mode "coq" "Major mode for editing Coq vernacular." t)
+(load-file "/usr/local/share/emacs/site-lisp/proof-general/generic/proof-site.el")
+
 ;; Allow hash to be entered
 (global-set-key (kbd "M-3") '(lambda () (interactive) (insert "#")))
 (tool-bar-mode -1)
@@ -69,16 +78,12 @@
   "Emacs quick move minor mode"
   t)
 
-;;set tab width globally
-(setq-default indent-tabs-mode nil)
-(setq-default tab-width 2)
-(setq css-indent-offset 2)
-
-(setq auto-mode-alist (cons '("\\.v$" . coq-mode) auto-mode-alist))
-  (autoload 'coq-mode "coq" "Major mode for editing Coq vernacular." t)
-(load-file "/usr/local/share/emacs/site-lisp/proof-general/generic/proof-site.el")
+(define-key global-map (kbd "C-c SPC") 'ace-jump-mode)
 
 (require 'web-mode)
+
+(add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.js?$" . web-mode))
 
 (defun my-web-mode-hook ()
   "web-mode settings"
@@ -87,14 +92,6 @@
   (setq web-mode-code-indent-offset 2))
 
 (add-hook 'web-mode-hook  'my-web-mode-hook)
-
-;; js2-mode for JavaScript (and React´s JSX)
-;; (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
-;; (add-to-list 'auto-mode-alist '("\\.js?\\'" . js2-jsx-mode))
-;; (add-to-list 'interpreter-mode-alist '("node" . js2-mode))
-;; (add-to-list 'interpreter-mode-alist '("node" . js2-jsx-mode))
-
-(define-key global-map (kbd "C-c SPC") 'ace-jump-mode)
 
 (define-minor-mode pair-helpers-minor-mode
   "This mode contains little helpers for js developement"
@@ -115,12 +112,12 @@
   (insert "'")
   (forward-char -1))
 
-;; (add-hook 'js2-mode-hook 'pair-helpers-minor-mode)
 (add-hook 'coffee-mode-hook 'pair-helpers-minor-mode)
 (add-hook 'ruby-mode-hook 'pair-helpers-minor-mode)
 (add-hook 'json-mode-hook 'pair-helpers-minor-mode)
 (add-hook 'jsx-mode-hook 'pair-helpers-minor-mode)
-(add-hook 'haskell-mode-hoo 'pair-helpers-minor-mode)
+(add-hook 'haskell-mode-hook 'pair-helpers-minor-mode)
+(add-hook 'web-mode-hook 'pair-helpers-minor-mode)
 
 (setq js-indent-level 2)
 (setq jsx-indent-level 2)
@@ -287,10 +284,18 @@
 
 (setq-default flycheck-disabled-checkers
   (append flycheck-disabled-checkers
-    '(json-jsonlist)))
+          '(json-jsonlist)))
 
-;; (flycheck-add-mode 'javascript-eslint 'js2-mode)
-;; (flycheck-add-mode 'javascript-eslint 'js2-jsx-mode)
+(flycheck-add-mode 'javascript-eslint 'web-mode)
+
+(dolist (mode '(ruby web))
+  (add-hook (intern (format "%s-mode-hook" mode))
+            '(lambda ()
+               (add-to-list (make-local-variable 'paredit-space-for-delimiter-predicates)
+                            (lambda (_ _) nil))
+               (enable-paredit-mode))))
+
+(show-smartparens-global-mode +1)
 
 ;; ruby config
 (require 'ag)
@@ -387,15 +392,6 @@ necessary"
 (add-hook 'clojure-mode-hook          'turn-on-paredit)
 (add-hook 'cider-repl-mode-hook       'turn-on-paredit)
 (add-hook 'sibiliant-mode-hook        'turn-on-paredit)
-
-(dolist (mode '(ruby coffee jsx json))
-  (add-hook (intern (format "%s-mode-hook" mode))
-            '(lambda ()
-               (add-to-list (make-local-variable 'paredit-space-for-delimiter-predicates)
-                            (lambda (_ _) nil))
-               (enable-paredit-mode))))
-
-(show-smartparens-global-mode +1)
 
 (defun beautify-json ()
   (interactive)

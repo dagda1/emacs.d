@@ -30,7 +30,6 @@
                      rbenv
                      smex
                      flx-ido
-                     js2-mode
                      key-chord
                      smartparens
                      web-mode
@@ -79,12 +78,21 @@
   (autoload 'coq-mode "coq" "Major mode for editing Coq vernacular." t)
 (load-file "/usr/local/share/emacs/site-lisp/proof-general/generic/proof-site.el")
 
+(require 'web-mode)
+
+(defun my-web-mode-hook ()
+  "web-mode settings"
+  (setq web-mode-markup-indent-offset 2)
+  (setq web-mode-css-indent-offset 2)
+  (setq web-mode-code-indent-offset 2))
+
+(add-hook 'web-mode-hook  'my-web-mode-hook)
 
 ;; js2-mode for JavaScript (and React´s JSX)
-(add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
-(add-to-list 'auto-mode-alist '("\\.js?\\'" . js2-jsx-mode))
-(add-to-list 'interpreter-mode-alist '("node" . js2-mode))
-(add-to-list 'interpreter-mode-alist '("node" . js2-jsx-mode))
+;; (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
+;; (add-to-list 'auto-mode-alist '("\\.js?\\'" . js2-jsx-mode))
+;; (add-to-list 'interpreter-mode-alist '("node" . js2-mode))
+;; (add-to-list 'interpreter-mode-alist '("node" . js2-jsx-mode))
 
 (define-key global-map (kbd "C-c SPC") 'ace-jump-mode)
 
@@ -107,7 +115,7 @@
   (insert "'")
   (forward-char -1))
 
-(add-hook 'js2-mode-hook 'pair-helpers-minor-mode)
+;; (add-hook 'js2-mode-hook 'pair-helpers-minor-mode)
 (add-hook 'coffee-mode-hook 'pair-helpers-minor-mode)
 (add-hook 'ruby-mode-hook 'pair-helpers-minor-mode)
 (add-hook 'json-mode-hook 'pair-helpers-minor-mode)
@@ -123,9 +131,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(coffee-tab-width 2 t)
- '(flycheck-coffeelintrc "~/.emacs.d/coffeelint.json")
- '(js2-basic-offset 2)
- '(js2-bounce-indent-p nil))
+ '(flycheck-coffeelintrc "~/.emacs.d/coffeelint.json"))
 
 ; list the repositories containing them
 (add-to-list 'package-archives
@@ -283,8 +289,8 @@
   (append flycheck-disabled-checkers
     '(json-jsonlist)))
 
-(flycheck-add-mode 'javascript-eslint 'js2-mode)
-(flycheck-add-mode 'javascript-eslint 'js2-jsx-mode)
+;; (flycheck-add-mode 'javascript-eslint 'js2-mode)
+;; (flycheck-add-mode 'javascript-eslint 'js2-jsx-mode)
 
 ;; ruby config
 (require 'ag)
@@ -382,7 +388,7 @@ necessary"
 (add-hook 'cider-repl-mode-hook       'turn-on-paredit)
 (add-hook 'sibiliant-mode-hook        'turn-on-paredit)
 
-(dolist (mode '(ruby coffee js2 jsx json))
+(dolist (mode '(ruby coffee jsx json))
   (add-hook (intern (format "%s-mode-hook" mode))
             '(lambda ()
                (add-to-list (make-local-variable 'paredit-space-for-delimiter-predicates)

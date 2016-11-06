@@ -31,7 +31,6 @@
                      smex
                      flx-ido
                      key-chord
-                     smartparens
                      web-mode
                      json-mode
                      ace-jump-mode
@@ -70,6 +69,8 @@
   "ace-jump-mode"
   "Ace jump back:-)"
   t)
+
+(show-paren-mode 1)
 
 (define-key global-map (kbd "C-x SPC") 'ace-jump-mode-pop-mark)
 (autoload
@@ -301,8 +302,6 @@
                (add-to-list (make-local-variable 'paredit-space-for-delimiter-predicates)
                             (lambda (_ _) nil))
                (enable-paredit-mode))))
-
-(show-smartparens-global-mode +1)
 
 ;; ruby config
 (require 'ag)

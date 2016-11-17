@@ -41,6 +41,8 @@
 
 (add-to-list 'load-path "~/.emacs.d/vendor/")
 
+(setq dired-use-ls-dired nil)
+
 (setq visible-bell nil) ;; The default
 (setq ring-bell-function 'ignore)
 

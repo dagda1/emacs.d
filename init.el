@@ -49,16 +49,22 @@
 (eval-after-load 'haskell-cabal
   '(define-key haskell-cabal-mode-map (kbd "C-c C-o") 'haskell-compile))
 
-(custom-set-variables '(haskell-process-type 'stack-ghci))
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(coffee-tab-width 2 t)
+ '(flycheck-coffeelintrc "~/.emacs.d/coffeelint.json")
+ '(haskell-process-type (quote stack-ghci))
+ '(package-selected-packages
+   (quote
+    (haskell-mode exec-path-from-shell ag ace-jump-mode json-mode web-mode key-chord flx-ido smex rbenv minitest gist git-gutter magit projectile scss-mode markdown-mode coffee-mode ruby-tools ruby-end flycheck-hdevtools flycheck zenburn-theme color-theme rainbow-mode rainbow-delimiters paredit-everywhere paredit elein clojurescript-mode cider auto-complete company))))
 
 ;;set tab width globally
 (setq-default indent-tabs-mode nil)
 (setq-default tab-width 2)
 (setq css-indent-offset 2)
-
-(setq auto-mode-alist (cons '("\\.v$" . coq-mode) auto-mode-alist))
-  (autoload 'coq-mode "coq" "Major mode for editing Coq vernacular." t)
-(load-file "/usr/local/share/emacs/site-lisp/proof-general/generic/proof-site.el")
 
 ;; Allow hash to be entered
 (global-set-key (kbd "M-3") '(lambda () (interactive) (insert "#")))
@@ -130,13 +136,7 @@
 (setq js-indent-level 2)
 (setq jsx-indent-level 2)
 
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(coffee-tab-width 2 t)
- '(flycheck-coffeelintrc "~/.emacs.d/coffeelint.json"))
+
 
 ; list the repositories containing them
 (add-to-list 'package-archives
@@ -246,7 +246,7 @@
 (require 'color-theme)
 (load-theme 'wombat t)
 
-(set-default-font "M+ 1mn-15")
+(set-frame-font "Monaco-14")
 
 (require 'projectile)
 (projectile-global-mode)
@@ -278,6 +278,8 @@
 (add-hook 'after-init-hook 'global-company-mode)
 
 (require 'flycheck)
+
+(setq-default flycheck-disabled-checkers '(emacs-lisp-checkdoc))
 
 ;; turn on flychecking globally
 (add-hook 'after-init-hook #'global-flycheck-mode)
@@ -411,3 +413,9 @@ necessary"
 (provide 'init)
 
 (put 'downcase-region 'disabled nil)
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )

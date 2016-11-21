@@ -37,7 +37,9 @@
                      ag
                      org
                      exec-path-from-shell
-                     haskell-mode                     ))
+                     haskell-mode
+                     sass-mode
+                     ))
 
 (add-to-list 'load-path "~/.emacs.d/vendor/")
 
@@ -137,8 +139,6 @@
 
 (setq js-indent-level 2)
 (setq jsx-indent-level 2)
-
-
 
 ; list the repositories containing them
 (add-to-list 'package-archives

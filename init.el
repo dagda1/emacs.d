@@ -147,9 +147,6 @@
 (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.js[x]?$" . web-mode))
 
-(setq-default web-mode-comment-formats (remove '("javascript" . "/*") web-mode-comment-formats))
-(add-to-list 'web-mode-comment-formats '("javascript" . "//"))
-
 (setq web-mode-content-types-alist
   '(("jsx" . "\\.js[x]?\\'")))
 
@@ -368,6 +365,12 @@
 (require 'ag)
 (require 'ruby-tools)
 (require 'ruby-end)
+
+(setq-default web-mode-comment-formats (remove '("javascript" . "/*") web-mode-comment-formats))
+(add-to-list 'web-mode-comment-formats '("javascript" . "//"))
+
+(setq-default web-mode-comment-formats
+              '(("javascript" . "//")))
 
 (add-to-list 'auto-mode-alist '("\\.rb\\'" . ruby-mode))
 (add-to-list 'auto-mode-alist '("\\.ru\\'" . ruby-mode))

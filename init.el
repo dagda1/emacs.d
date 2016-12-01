@@ -39,6 +39,7 @@
                      exec-path-from-shell
                      haskell-mode
                      sass-mode
+                     yaml-mode
                      ))
 
 (add-to-list 'load-path "~/.emacs.d/vendor/")
@@ -90,6 +91,11 @@
   t)
 
 (define-key global-map (kbd "C-c SPC") 'ace-jump-mode)
+
+(add-to-list 'auto-mode-alist '("\\.yml\\'" . yaml-mode))
+(add-hook 'yaml-mode-hook
+          (lambda ()
+            (define-key yaml-mode-map "\C-m" 'newline-and-indent)))
 
 (require 'web-mode)
 
@@ -286,7 +292,7 @@
 ;; turn on flychecking globally
 (add-hook 'after-init-hook #'global-flycheck-mode)
 
-;; disable jshint since we prefer eslint checking
+;; disable jshint since we prefer eslintchecking
 (setq-default flycheck-disabled-checkers
               (append flycheck-disabled-checkers
                       '(javascript-jshint)))
@@ -298,7 +304,22 @@
   (append flycheck-disabled-checkers
           '(json-jsonlist)))
 
+(when (memq window-system '(mac ns))
+  (exec-path-from-shell-initialize))
+
 (flycheck-add-mode 'javascript-eslint 'web-mode)
+
+(defun my/use-eslint-from-node-modules ()
+  (let* ((root (locate-dominating-file
+                (or (buffer-file-name) default-directory)
+                "node_modules"))
+         (eslint (and root
+                      (expand-file-name "node_modules/eslint/bin/eslint.js"
+                                        root))))
+    (when (and eslint (file-executable-p eslint))
+      (setq-local flycheck-javascript-eslint-executable eslint))))
+
+(add-hook 'flycheck-mode-hook #'my/use-eslint-from-node-modules)
 
 (dolist (mode '(ruby web))
   (add-hook (intern (format "%s-mode-hook" mode))

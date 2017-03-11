@@ -44,6 +44,10 @@
 
 (add-to-list 'load-path "~/.emacs.d/vendor/")
 
+(add-to-list 'load-path "~/.emacs.d/lisp")
+(require 'editorconfig)
+(editorconfig-mode 1)
+
 (setq dired-use-ls-dired nil)
 
 (setq visible-bell nil) ;; The default
@@ -64,12 +68,44 @@
  '(haskell-process-type (quote stack-ghci))
  '(package-selected-packages
    (quote
-    (haskell-mode exec-path-from-shell ag ace-jump-mode json-mode web-mode key-chord flx-ido smex rbenv minitest gist git-gutter magit projectile scss-mode markdown-mode coffee-mode ruby-tools ruby-end flycheck-hdevtools flycheck zenburn-theme color-theme rainbow-mode rainbow-delimiters paredit-everywhere paredit elein clojurescript-mode cider auto-complete company))))
+    (mocha haskell-mode exec-path-from-shell ag ace-jump-mode json-mode web-mode key-chord flx-ido smex rbenv minitest gist git-gutter magit projectile scss-mode markdown-mode coffee-mode ruby-tools ruby-end flycheck-hdevtools flycheck zenburn-theme color-theme rainbow-mode rainbow-delimiters paredit-everywhere paredit elein clojurescript-mode cider auto-complete company))))
 
 ;;set tab width globally
 (setq-default indent-tabs-mode nil)
 (setq-default tab-width 2)
 (setq css-indent-offset 2)
+
+;; (require 'eproject)
+;; (require 'eproject-extras)
+;; (require 'etags-select)
+
+;; (setq path-to-ctags "/usr/local/bin/ctags")
+;; (setq tags-case-fold-search nil)
+
+;; (defun build-ctags ()
+;;   (interactive)
+;;   (message "building project tags")
+;;   (let ((root (eproject-root)))
+;;     (shell-command (concat "ctags -e -R --exclude=node_modules --exclude=test --exclude=.git --exclude=public -f " root "TAGS " root)))
+;;   (visit-project-tags)
+;;   (message "tags built successfully"))
+
+;; (defun visit-project-tags ()
+;;   (interactive)
+;;   (let ((tags-file (concat (eproject-root) "TAGS")))
+;;     (visit-tags-table tags-file)
+;;     (message (concat "Loaded " tags-file))))
+
+;; ; check if tags file is there, if not build it, then read it and jump
+;; ; to the tag at the current point
+;; (defun my-find-tag ()
+;;   (interactive)
+;;   (if (file-exists-p (concat (eproject-root) "TAGS"))
+;;       (visit-project-tags)
+;;     (build-ctags))
+;;   (etags-select-find-tag-at-point))
+
+;; (global-set-key (kbd "M-.") 'my-find-tag)
 
 ;; Allow hash to be entered
 (global-set-key (kbd "M-3") '(lambda () (interactive) (insert "#")))
@@ -372,8 +408,6 @@ necessary"
 (setq enh-ruby-program rbenv-ruby-shim)
 
 (add-hook 'enh-ruby-mode-hook 'minitest-mode)
-
-(require 'handlebars-mode)
 
 (require 'paredit)
 

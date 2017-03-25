@@ -2,9 +2,6 @@
 
 (setq package-list '(company
                      auto-complete
-                     cider
-                     clojure-mode
-                     clojurescript-mode
                      elein
                      paredit
                      paredit-everywhere
@@ -21,7 +18,6 @@
                      git-gutter
                      gist
                      minitest
-                     rbenv
                      smex
                      flx-ido
                      key-chord
@@ -60,48 +56,16 @@
  '(haskell-process-type (quote stack-ghci))
  '(package-selected-packages
    (quote
-    (restclient mocha haskell-mode exec-path-from-shell ag ace-jump-mode json-mode web-mode key-chord flx-ido smex rbenv minitest gist git-gutter projectile scss-mode markdown-mode flycheck-hdevtools flycheck rainbow-mode rainbow-delimiters paredit-everywhere paredit elein clojurescript-mode cider auto-complete company))))
+    (restclient mocha haskell-mode exec-path-from-shell ag ace-jump-mode json-mode web-mode key-chord flx-ido smex rbenv minitest gist git-gutter projectile scss-mode markdown-mode flycheck-hdevtools flycheck rainbow-mode rainbow-delimiters paredit-everywhere paredit elein auto-complete company))))
 
 ;;set tab width globally
 (setq-default indent-tabs-mode nil)
 (setq-default tab-width 2)
 (setq css-indent-offset 2)
 
-;; (require 'eproject)
-;; (require 'eproject-extras)
-;; (require 'etags-select)
-
-;; (setq path-to-ctags "/usr/local/bin/ctags")
-;; (setq tags-case-fold-search nil)
-
-;; (defun build-ctags ()
-;;   (interactive)
-;;   (message "building project tags")
-;;   (let ((root (eproject-root)))
-;;     (shell-command (concat "ctags -e -R --exclude=node_modules --exclude=test --exclude=.git --exclude=public -f " root "TAGS " root)))
-;;   (visit-project-tags)
-;;   (message "tags built successfully"))
-
-;; (defun visit-project-tags ()
-;;   (interactive)
-;;   (let ((tags-file (concat (eproject-root) "TAGS")))
-;;     (visit-tags-table tags-file)
-;;     (message (concat "Loaded " tags-file))))
-
-;; ; check if tags file is there, if not build it, then read it and jump
-;; ; to the tag at the current point
-;; (defun my-find-tag ()
-;;   (interactive)
-;;   (if (file-exists-p (concat (eproject-root) "TAGS"))
-;;       (visit-project-tags)
-;;     (build-ctags))
-;;   (etags-select-find-tag-at-point))
-
-;; (global-set-key (kbd "M-.") 'my-find-tag)
-
 ;; Allow hash to be entered
 (global-set-key (kbd "M-3") '(lambda () (interactive) (insert "#")))
-(tool-bar-mode -1)
+;;(tool-bar-mode -1)
 
 (autoload
   'ace-jump-mode-pop-mark
@@ -381,31 +345,7 @@
 
 (global-set-key "\M-/" 'hippie-expand)
 
-; cider config
-(require 'cider)
-(setq nrepl-hide-special-buffers t)
-(setq cider-show-error-buffer nil)
-
-(define-key clojure-mode-map (kbd "C-o j") 'cider-jack-in)
-(define-key clojure-mode-map (kbd "C-o J") 'cider-restart)
-(define-key clojure-mode-map (kbd "C-o y") 'cider-eval-last-sexp-and-append)
-
 (add-hook 'prog-mode-hook  'rainbow-delimiters-mode)
-
-(define-clojure-indent
-  (defroutes 'defun)
-  (GET 2)
-  (POST 2)
-  (PUT 2)
-  (DELETE 2)
-  (HEAD 2)
-  (ANY 2)
-  (context 2))
-
-(add-hook 'clojure-mode-hook
-          (lambda ()
-            (local-set-key (kbd "M-e") 'forward-sexp)
-            (local-set-key (kbd "M-a") 'backward-sexp)))
 
 (defun turn-on-paredit () (paredit-mode t))
 
@@ -416,8 +356,6 @@
 (add-hook 'lisp-mode-hook             'turn-on-paredit)
 (add-hook 'lisp-interaction-mode-hook 'turn-on-paredit)
 (add-hook 'scheme-mode-hook           'turn-on-paredit)
-(add-hook 'clojure-mode-hook          'turn-on-paredit)
-(add-hook 'cider-repl-mode-hook       'turn-on-paredit)
 (add-hook 'sibiliant-mode-hook        'turn-on-paredit)
 
 (defun beautify-json ()

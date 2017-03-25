@@ -11,14 +11,8 @@
                      popup
                      rainbow-delimiters
                      rainbow-mode
-                     color-theme
-                     zenburn-theme
                      flycheck
                      flycheck-hdevtools
-                     ruby-mode
-                     ruby-end
-                     ruby-tools
-                     coffee-mode
                      ido
                      markdown-mode
                      scss-mode
@@ -50,7 +44,7 @@
 
 (setq dired-use-ls-dired nil)
 
-(setq visible-bell nil) ;; The default
+(setq visible-be0Bll nil) ;; The default
 (setq ring-bell-function 'ignore)
 
 (eval-after-load 'haskell-mode
@@ -63,12 +57,10 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(coffee-tab-width 2 t)
- '(flycheck-coffeelintrc "~/.emacs.d/coffeelint.json")
  '(haskell-process-type (quote stack-ghci))
  '(package-selected-packages
    (quote
-    (mocha haskell-mode exec-path-from-shell ag ace-jump-mode json-mode web-mode key-chord flx-ido smex rbenv minitest gist git-gutter magit projectile scss-mode markdown-mode coffee-mode ruby-tools ruby-end flycheck-hdevtools flycheck zenburn-theme color-theme rainbow-mode rainbow-delimiters paredit-everywhere paredit elein clojurescript-mode cider auto-complete company))))
+    (restclient mocha haskell-mode exec-path-from-shell ag ace-jump-mode json-mode web-mode key-chord flx-ido smex rbenv minitest gist git-gutter projectile scss-mode markdown-mode flycheck-hdevtools flycheck rainbow-mode rainbow-delimiters paredit-everywhere paredit elein clojurescript-mode cider auto-complete company))))
 
 ;;set tab width globally
 (setq-default indent-tabs-mode nil)
@@ -185,8 +177,6 @@
   (insert "'")
   (forward-char -1))
 
-(add-hook 'coffee-mode-hook 'pair-helpers-minor-mode)
-(add-hook 'ruby-mode-hook 'pair-helpers-minor-mode)
 (add-hook 'json-mode-hook 'pair-helpers-minor-mode)
 (add-hook 'jsx-mode-hook 'pair-helpers-minor-mode)
 (add-hook 'haskell-mode-hook 'pair-helpers-minor-mode)
@@ -296,10 +286,6 @@
 (setq-default default-tab-width 2)
 (setq-default indent-tabs-mode nil)
 
-(setq coffee-tab-width 2)
-
-(add-hook 'coffee-mode-hook 'flymake-mode)
-
 (require 'color-theme)
 (load-theme 'wombat t)
 
@@ -370,63 +356,20 @@
 
 (add-hook 'flycheck-mode-hook #'my/use-eslint-from-node-modules)
 
-(dolist (mode '(ruby web))
+(dolist (mode '(web))
   (add-hook (intern (format "%s-mode-hook" mode))
             '(lambda ()
                (add-to-list (make-local-variable 'paredit-space-for-delimiter-predicates)
                             (lambda (_ _) nil))
                (enable-paredit-mode))))
 
-;; ruby config
 (require 'ag)
-(require 'ruby-tools)
-(require 'ruby-end)
 
 (setq-default web-mode-comment-formats (remove '("javascript" . "/*") web-mode-comment-formats))
 (add-to-list 'web-mode-comment-formats '("javascript" . "//"))
 
 (setq-default web-mode-comment-formats
               '(("javascript" . "//")))
-
-(add-to-list 'auto-mode-alist '("\\.rb\\'" . ruby-mode))
-(add-to-list 'auto-mode-alist '("\\.ru\\'" . ruby-mode))
-(add-to-list 'auto-mode-alist '("\\.rake\\'" . ruby-mode))
-(add-to-list 'auto-mode-alist '("\\.gemspec\\'" . ruby-mode))
-(add-to-list 'auto-mode-alist '("\\.rabl\\'" . ruby-mode))
-(add-to-list 'auto-mode-alist '("\\.jbuilder\\'" . ruby-mode))
-(add-to-list 'auto-mode-alist '("\\.prawn\\'" . ruby-mode))
-(add-to-list 'auto-mode-alist '("Capfile" . ruby-mode))
-(add-to-list 'auto-mode-alist '("Gemfile" . ruby-mode))
-(add-to-list 'auto-mode-alist '("Rakefile" . ruby-mode))
-(add-to-list 'auto-mode-alist '("Vagrantfile" . ruby-mode))
-(add-to-list 'auto-mode-alist '("Cheffile" . ruby-mode))
-(add-to-list 'auto-mode-alist '("Berksfile" . ruby-mode))
-
-(setq ruby-indent-tabs-mode nil)
-(setq ruby-indent-level 2)
-
-(require 'minitest)
-(add-hook 'ruby-mode-hook 'minitest-mode)
-
-(defun cowboyd-minitest-setup-env (do-run &rest arguments)
-  "Use Bash for minitest to avoid Zsh issues. Also, activate rbenv ruby if
-necessary"
-  (let ((shell-file-name "/bin/bash"))
-    (rbenv-use-corresponding)
-    (apply do-run arguments)))
-
-(advice-add 'minitest--run-command :around #'cowboyd-minitest-setup-env)
-
-(require 'rbenv)
-(global-rbenv-mode)
-(rbenv-use-global)
-
-(autoload 'enh-ruby-mode "enh-ruby-mode" "" t)
-(add-to-list 'interpreter-mode-alist '("ruby" . enh-ruby-mode))
-
-(setq enh-ruby-program rbenv-ruby-shim)
-
-(add-hook 'enh-ruby-mode-hook 'minitest-mode)
 
 (require 'paredit)
 

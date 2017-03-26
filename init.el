@@ -1,62 +1,28 @@
 (require 'package)
+(setq package-enable-at-startup nil)
+(add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
+(add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/"))
+(add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/"))
+(package-initialize)
 
-(setq package-list '(company
-                     auto-complete
-                     elein
-                     paredit
-                     paredit-everywhere
-                     popup
-                     rainbow-delimiters
-                     rainbow-mode
-                     flycheck
-                     flycheck-hdevtools
-                     ido
-                     markdown-mode
-                     scss-mode
-                     projectile
-                     magit
-                     git-gutter
-                     gist
-                     minitest
-                     smex
-                     flx-ido
-                     key-chord
-                     web-mode
-                     json-mode
-                     ace-jump-mode
-                     ag
-                     org
-                     exec-path-from-shell
-                     haskell-mode
-                     sass-mode
-                     yaml-mode
-                     ))
+(unless (package-installed-p 'use-package)
+  (package-refresh-contents)
+  (package-install 'use-package))
+
+(eval-when-compile
+  (require 'use-package))
+(require 'diminish)
+(require 'bind-key)
 
 (add-to-list 'load-path "~/.emacs.d/vendor/")
-
 (add-to-list 'load-path "~/.emacs.d/lisp")
 (require 'editorconfig)
 (editorconfig-mode 1)
 
 (setq dired-use-ls-dired nil)
 
-(setq visible-be0Bll nil) ;; The default
+(setq visible-bell nil) ;; The default
 (setq ring-bell-function 'ignore)
-
-(eval-after-load 'haskell-mode
-  '(define-key haskell-mode-map (kbd "C-c C-o") 'haskell-compile))
-(eval-after-load 'haskell-cabal
-  '(define-key haskell-cabal-mode-map (kbd "C-c C-o") 'haskell-compile))
-
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(haskell-process-type (quote stack-ghci))
- '(package-selected-packages
-   (quote
-    (restclient mocha haskell-mode exec-path-from-shell ag ace-jump-mode json-mode web-mode key-chord flx-ido smex rbenv minitest gist git-gutter projectile scss-mode markdown-mode flycheck-hdevtools flycheck rainbow-mode rainbow-delimiters paredit-everywhere paredit elein auto-complete company))))
 
 ;;set tab width globally
 (setq-default indent-tabs-mode nil)
@@ -65,8 +31,6 @@
 
 ;; Allow hash to be entered
 (global-set-key (kbd "M-3") '(lambda () (interactive) (insert "#")))
-;;(tool-bar-mode -1)
-
 (autoload
   'ace-jump-mode-pop-mark
   "ace-jump-mode"
@@ -89,26 +53,23 @@
           (lambda ()
             (define-key yaml-mode-map "\C-m" 'newline-and-indent)))
 
-(require 'web-mode)
-
-(defun my-web-mode-hook ()
-  "web-mode settings"
-  (setq web-mode-markup-indent-offset 2)
-  (setq web-mode-css-indent-offset 2)
-  (setq web-mode-code-indent-offset 2)
-  (setq web-mode-enable-auto-quoting nil)
-  (setq web-mode-enable-auto-pairing t)
-  (setq web-mode-enable-css-colorization t))
-
-(add-hook 'web-mode-hook  'my-web-mode-hook)
-
-(add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
-(add-to-list 'auto-mode-alist '("\\.js[x]?$" . web-mode))
-(add-to-list 'auto-mode-alist '("\\.css\\'"    . web-mode))
-(add-to-list 'auto-mode-alist '("\\.scss\\'"   . web-mode))
-
-(setq web-mode-content-types-alist
-  '(("jsx" . "\\.js[x]?\\'")))
+(use-package web-mode
+  :init (
+         progn
+          (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
+          (add-to-list 'auto-mode-alist '("\\.js[x]?$" . web-mode))
+          (add-to-list 'auto-mode-alist '("\\.css\\'"    . web-mode))
+          (add-to-list 'auto-mode-alist '("\\.scss\\'"   . web-mode))
+          )
+  :config (
+           progn
+            (setq web-mode-markup-indent-offset 2)
+            (setq web-mode-css-indent-offset 2)
+            (setq web-mode-code-indent-offset 2)
+            (setq web-mode-enable-auto-quoting nil)
+            (setq web-mode-enable-auto-pairing t)
+            (setq web-mode-enable-css-colorization t))
+  )
 
 (defadvice web-mode-highlight-part (around tweak-jsx activate)
   (if (equal web-mode-content-type "jsx")
@@ -143,33 +104,14 @@
 
 (add-hook 'json-mode-hook 'pair-helpers-minor-mode)
 (add-hook 'jsx-mode-hook 'pair-helpers-minor-mode)
-(add-hook 'haskell-mode-hook 'pair-helpers-minor-mode)
 (add-hook 'web-mode-hook 'pair-helpers-minor-mode)
 
 (setq js-indent-level 2)
 (setq jsx-indent-level 2)
 
-; list the repositories containing them
-(add-to-list 'package-archives
-             '("melpa" . "http://melpa.milkbox.net/packages/") t)
-(add-to-list 'package-archives
-             '("marmalade" . "http://marmalade-repo.org/packages/") t)
-
-; activate all the packages (in particular autoloads)
-(package-initialize)
-
-; fetch the list of packages available
-(unless package-archive-contents
-  (package-refresh-contents))
-
-; install the missing packages
-(dolist (package package-list)
-  (unless (package-installed-p package)
-    (package-install package)))
-
-(require 'magit)
-; magit configuration
-(setq magit-push-always-verify nil)
+(use-package magit
+  :init (progn
+          (setq magit-push-always-verify nil)))
 
 ;; Always ALWAYS use UTF-8
 (set-terminal-coding-system 'utf-8)
@@ -240,7 +182,7 @@
 (setq column-number-mode t)
 (setq ns-pop-up-frames nil)
 
-(require 'server)
+(use-package server)
 (unless (server-running-p)
   (server-start))
 
@@ -250,46 +192,68 @@
 (setq-default default-tab-width 2)
 (setq-default indent-tabs-mode nil)
 
-(require 'color-theme)
-(load-theme 'wombat t)
+(use-package wombat
+  :init
+  (load-theme 'wombat))
 
 (set-frame-font "Monaco-14")
 
-(require 'projectile)
+(use-package projectile
+  :ensure    projectile
+  :config    (projectile-global-mode t)
+  :init      (progn
+               ;; set projectile custom variables
+               (setq projectile-enable-caching t))
+  :diminish   projectile-mode)
 (projectile-global-mode)
-(setq projectile-enable-caching nil)
 
-(require 'ido)
+(use-package ido
+  :ensure t
+  :config
+  (setq ido-enable-prefix nil
+        ido-enable-flex-matching t
+        ido-create-new-buffer 'always
+        ido-use-filename-at-point 'guess
+        ido-max-prospects 10
+        ido-default-file-method 'selected-window
+        ido-auto-merge-work-directories-length -1)
+  (ido-mode +1))
 
-(ido-mode +1)
+(use-package flx-ido
+  :ensure t
+  :config
+  (flx-ido-mode +1)
+  ;; disable ido faces to see flx highlights
+  (setq ido-use-faces nil))
 
-;;; smarter fuzzy matching for ido
-(flx-ido-mode +1)
-;; disable ido faces to see flx highlights
-(setq ido-use-faces nil)
+(use-package smex
+  :ensure t
+  :bind ("M-x" . smex))
 
-;;; smex, remember recently and most frequently used commands
-(require 'smex)
-(smex-initialize)
-(global-set-key (kbd "M-x") 'smex)
-(global-set-key (kbd "M-X") 'smex-major-mode-commands)
+;; (provide 'prelude-ido)
 
-(provide 'prelude-ido)
+(use-package markdown-mode
+  :ensure t)
 
-(require 'rainbow-delimiters)
-(add-hook 'prog-mode-hook #'rainbow-delimiters-mode)
+(use-package yaml-mode
+  :ensure t)
 
-(require 'company)
-(global-company-mode 1)
-(add-hook 'after-init-hook #'global-flycheck-mode)
-(add-hook 'after-init-hook 'global-company-mode)
+(use-package rainbow-delimiters
+  :ensure t
+  :config
+  (add-hook 'prog-mode-hook #'rainbow-delimiters-mode))
 
-(require 'flycheck)
+(use-package company
+  :ensure t
+  :config
+  (global-company-mode))
+
+(use-package flycheck
+  :ensure t
+  :config
+  (add-hook 'after-init-hook #'global-flycheck-mode))
 
 (setq-default flycheck-disabled-checkers '(emacs-lisp-checkdoc))
-
-;; turn on flychecking globally
-(add-hook 'after-init-hook #'global-flycheck-mode)
 
 ;; disable jshint since we prefer eslintchecking
 (setq-default flycheck-disabled-checkers
@@ -327,7 +291,7 @@
                             (lambda (_ _) nil))
                (enable-paredit-mode))))
 
-(require 'ag)
+(use-package ag)
 
 (setq-default web-mode-comment-formats (remove '("javascript" . "/*") web-mode-comment-formats))
 (add-to-list 'web-mode-comment-formats '("javascript" . "//"))
@@ -335,7 +299,10 @@
 (setq-default web-mode-comment-formats
               '(("javascript" . "//")))
 
-(require 'paredit)
+(use-package paredit)
+
+(use-package restclient
+  :mode ("\\.http\\'" . restclient-mode))
 
 (setq exec-path-from-shell-check-startup-files nil)
 

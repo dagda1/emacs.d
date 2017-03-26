@@ -16,6 +16,7 @@
 
 (add-to-list 'load-path "~/.emacs.d/vendor/")
 (add-to-list 'load-path "~/.emacs.d/lisp")
+
 (require 'editorconfig)
 (editorconfig-mode 1)
 
@@ -29,8 +30,90 @@
 (setq-default tab-width 2)
 (setq css-indent-offset 2)
 
+;; Always ALWAYS use UTF-8
+(set-terminal-coding-system 'utf-8)
+(set-keyboard-coding-system 'utf-8)
+(prefer-coding-system 'utf-8)
+(load-library "iso-transl")
+
+;; copy and paste
+(setq interprogram-cut-function 'paste-to-osx
+      interprogram-paste-function 'copy-from-osx)
+
+(defun copy-from-osx ()
+  (let ((coding-system-for-read 'utf-8))
+    (shell-command-to-string "pbpaste")))
+
+(defun paste-to-osx (text &optional push)
+  (let ((process-connection-type nil))
+    (let ((proc (start-process "pbcopy" "*Messages*" "pbcopy")))
+      (set-process-sentinel proc 'ignore) ;; stifle noise in *Messages*
+      (process-send-string proc text)
+      (process-send-eof proc)))
+  text)
+
+;;; kill other buffers
+(defun kill-other-buffers ()
+    "Kill all other buffers."
+    (interactive)
+    (mapc 'kill-buffer
+          (delq (current-buffer)
+                (remove-if-not 'buffer-file-name (buffer-list)))))
+
+;; Always ask for y/n keypress instead of typing out 'yes' or 'no'
+(defalias 'yes-or-no-p 'y-or-n-p)
+
+(setq dotfiles-dir (file-name-directory
+                    (or (buffer-file-name) load-file-name)))
+
+;; auto saving
+(setq auto-save-default t)
+(setq auto-save-visited-file-name t)
+(setq auto-save-interval 20) ; twenty keystrokes
+(setq auto-save-timeout 1) ; 1 second of idle time
+
+(defvar user-temporary-file-directory
+  (concat temporary-file-directory user-login-name "/"))
+
+(make-directory user-temporary-file-directory t)
+
+(setq backup-by-copying t)
+
+(setq backup-directory-alist
+      `(("." . ,user-temporary-file-directory)
+        (,tramp-file-name-regexp nil)))
+
+(setq auto-save-list-file-prefix
+      (concat user-temporary-file-directory ".auto-saves-"))
+
+(setq auto-save-file-name-transforms
+      `((".*" ,user-temporary-file-directory t)))
+
+(setq create-lockfiles nil)
+
+(global-linum-mode t)
+(global-hl-line-mode t)
+(setq inhibit-startup-message t)
+(setq x-underline-at-descent-line t)
+(when (fboundp 'tool-bar-mode) (tool-bar-mode -1))
+(when (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
+(unless (display-graphic-p) (menu-bar-mode -1))
+(setq mouse-wheel-scroll-amount '(1 ((shift) . 1)))
+(setq mouse-wheel-progressive-speed nil)
+(setq mouse-wheel-follow-mouse 't)
+(setq scroll-step 1)
+(setq column-number-mode t)
+(setq ns-pop-up-frames nil)
+(setq-default show-trailing-whitespace t)
+(add-hook 'term-mode-hook (lambda () (setq show-trailing-whitespace nil)))
+(setq-default visible-bell 'top-bottom)
+(setq-default default-tab-width 2)
+(setq-default indent-tabs-mode nil)
+
+
 ;; Allow hash to be entered
 (global-set-key (kbd "M-3") '(lambda () (interactive) (insert "#")))
+
 (autoload
   'ace-jump-mode-pop-mark
   "ace-jump-mode"
@@ -113,86 +196,12 @@
   :init (progn
           (setq magit-push-always-verify nil)))
 
-;; Always ALWAYS use UTF-8
-(set-terminal-coding-system 'utf-8)
-(set-keyboard-coding-system 'utf-8)
-(prefer-coding-system 'utf-8)
-(load-library "iso-transl")
-
-;; copy and paste
-(setq interprogram-cut-function 'paste-to-osx
-      interprogram-paste-function 'copy-from-osx)
-
-(defun copy-from-osx ()
-  (let ((coding-system-for-read 'utf-8))
-    (shell-command-to-string "pbpaste")))
-
-(defun paste-to-osx (text &optional push)
-  (let ((process-connection-type nil))
-    (let ((proc (start-process "pbcopy" "*Messages*" "pbcopy")))
-      (set-process-sentinel proc 'ignore) ;; stifle noise in *Messages*
-      (process-send-string proc text)
-      (process-send-eof proc)))
-  text)
-
-;;; kill other buffers
-(defun kill-other-buffers ()
-    "Kill all other buffers."
-    (interactive)
-    (mapc 'kill-buffer
-          (delq (current-buffer)
-                (remove-if-not 'buffer-file-name (buffer-list)))))
-
-;; Always ask for y/n keypress instead of typing out 'yes' or 'no'
-(defalias 'yes-or-no-p 'y-or-n-p)
-
-(setq dotfiles-dir (file-name-directory
-                    (or (buffer-file-name) load-file-name)))
-
-;; auto saving
-(setq auto-save-default t)
-(setq auto-save-visited-file-name t)
-(setq auto-save-interval 20) ; twenty keystrokes
-(setq auto-save-timeout 1) ; 1 second of idle time
-
-(defvar user-temporary-file-directory
-  (concat temporary-file-directory user-login-name "/"))
-(make-directory user-temporary-file-directory t)
-(setq backup-by-copying t)
-(setq backup-directory-alist
-      `(("." . ,user-temporary-file-directory)
-        (,tramp-file-name-regexp nil)))
-(setq auto-save-list-file-prefix
-      (concat user-temporary-file-directory ".auto-saves-"))
-(setq auto-save-file-name-transforms
-      `((".*" ,user-temporary-file-directory t)))
-(setq create-lockfiles nil)
-
-(global-linum-mode t)
-(global-hl-line-mode t)
-(setq inhibit-startup-message t)
-(setq x-underline-at-descent-line t)
-(when (fboundp 'tool-bar-mode) (tool-bar-mode -1))
-(when (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
-(unless (display-graphic-p) (menu-bar-mode -1))
-(setq mouse-wheel-scroll-amount '(1 ((shift) . 1)))
-(setq mouse-wheel-progressive-speed nil)
-(setq mouse-wheel-follow-mouse 't)
-(setq scroll-step 1)
-(setq column-number-mode t)
-(setq ns-pop-up-frames nil)
-
 (use-package server)
 (unless (server-running-p)
   (server-start))
 
-(setq-default show-trailing-whitespace t)
-(add-hook 'term-mode-hook (lambda () (setq show-trailing-whitespace nil)))
-(setq-default visible-bell 'top-bottom)
-(setq-default default-tab-width 2)
-(setq-default indent-tabs-mode nil)
 
-(use-package wombat
+(use-package color-theme
   :init
   (load-theme 'wombat))
 
@@ -229,8 +238,6 @@
 (use-package smex
   :ensure t
   :bind ("M-x" . smex))
-
-;; (provide 'prelude-ido)
 
 (use-package markdown-mode
   :ensure t)

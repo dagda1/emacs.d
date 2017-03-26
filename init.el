@@ -14,11 +14,12 @@
 (require 'diminish)
 (require 'bind-key)
 
-(add-to-list 'load-path "~/.emacs.d/vendor/")
 (add-to-list 'load-path "~/.emacs.d/lisp")
 
 (require 'editorconfig)
 (editorconfig-mode 1)
+
+(require 'nodejs-repl)
 
 (setq dired-use-ls-dired nil)
 

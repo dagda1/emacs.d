@@ -151,8 +151,10 @@
             (setq web-mode-code-indent-offset 2)
             (setq web-mode-enable-auto-quoting nil)
             (setq web-mode-enable-auto-pairing t)
-            (setq web-mode-enable-css-colorization t))
-  )
+            (setq web-mode-enable-css-colorization t)))
+
+(setq web-mode-content-types-alist
+      '(("jsx" . "/\\(container\\|component\\)[s]?/.*\\.js[x]?\\'")))
 
 (defadvice web-mode-highlight-part (around tweak-jsx activate)
   (if (equal web-mode-content-type "jsx")
@@ -169,33 +171,15 @@
 (use-package smartparens
   :ensure t
   :diminish smartparens-mode
+  :commands (smartparens-mode
+             smartparens-strict-mode)
   :config
   (progn
     (require 'smartparens-config)
     (smartparens-global-mode 1)))
 
-(define-minor-mode pair-helpers-minor-mode
-  "This mode contains little helpers for js developement"
-  nil
-  ""
-  '(((kbd "{") . insert-js-block-parentheses)
-    ((kbd "'") . insert-js-closing-quote)))
-
-(defun insert-js-block-parentheses ()
-  (interactive)
-  (insert "{")
-  (insert "}")
-  (forward-char -1))
-
-(defun insert-js-closing-quote ()
-  (interactive)
-  (insert "'")
-  (insert "'")
-  (forward-char -1))
-
-(add-hook 'json-mode-hook 'pair-helpers-minor-mode)
-(add-hook 'jsx-mode-hook 'pair-helpers-minor-mode)
-(add-hook 'web-mode-hook 'pair-helpers-minor-mode)
+(add-hook 'web-mode-hook #'smartparens-mode)
+(add-hook 'web-mode-hook 'smartparens-strict-mode)
 
 (setq js-indent-level 2)
 (setq jsx-indent-level 2)

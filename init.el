@@ -170,16 +170,20 @@
 
 (use-package smartparens
   :ensure t
-  :diminish smartparens-mode
-  :commands (smartparens-mode
-             smartparens-strict-mode)
+  :init
+  (smartparens-global-mode)
+  (show-smartparens-global-mode)
+  (dolist (hook '(inferior-emacs-lisp-mode-hook
+                  emacs-lisp-mode-hook))
+    (add-hook hook #'smartparens-strict-mode))
   :config
-  (progn
-    (require 'smartparens-config)
-    (smartparens-global-mode 1)))
+  (require 'smartparens-config)
+  (setq sp-autoskip-closing-pair 'always)
+  (sp-local-pair 'web-mode "<" nil :actions :rem)
+  :diminish (smartparens-mode))
 
 (add-hook 'web-mode-hook #'smartparens-mode)
-(add-hook 'web-mode-hook 'smartparens-strict-mode)
+;; (add-hook 'web-mode-hook 'smartparens-strict-mode)
 
 (setq js-indent-level 2)
 (setq jsx-indent-level 2)
@@ -329,4 +333,4 @@
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (zenburn-theme yaml-mode web-mode use-package smex scss-mode sass-mode ruby-tools ruby-end rbenv rainbow-mode rainbow-delimiters projectile paredit-everywhere minitest markdown-mode magit key-chord json-mode js2-refactor haskell-mode git-gutter gist flycheck-hdevtools flx-ido exec-path-from-shell elein company color-theme coffee-mode clojurescript-mode cider ag ace-jump-mode ac-slime ac-js2))))
+    (zenburn-theme yaml-mode web-mode use-package smex scss-mode sass-mode rainbow-mode rainbow-delimiters projectile markdown-mode magit key-chord json-mode git-gutter gist flycheck-hdevtools flx-ido exec-path-from-shell elein company ac-js2 smart-parens))))

@@ -166,6 +166,14 @@
         ad-do-it)
     ad-do-it))
 
+(use-package smartparens
+  :ensure t
+  :diminish smartparens-mode
+  :config
+  (progn
+    (require 'smartparens-config)
+    (smartparens-global-mode 1)))
+
 (define-minor-mode pair-helpers-minor-mode
   "This mode contains little helpers for js developement"
   nil
@@ -291,13 +299,6 @@
 
 (add-hook 'flycheck-mode-hook #'my/use-eslint-from-node-modules)
 
-(dolist (mode '(web))
-  (add-hook (intern (format "%s-mode-hook" mode))
-            '(lambda ()
-               (add-to-list (make-local-variable 'paredit-space-for-delimiter-predicates)
-                            (lambda (_ _) nil))
-               (enable-paredit-mode))))
-
 (use-package ag)
 
 (setq-default web-mode-comment-formats (remove '("javascript" . "/*") web-mode-comment-formats))
@@ -305,8 +306,6 @@
 
 (setq-default web-mode-comment-formats
               '(("javascript" . "//")))
-
-(use-package paredit)
 
 (use-package restclient
   :mode ("\\.http\\'" . restclient-mode))
@@ -320,17 +319,6 @@
 (global-set-key "\M-/" 'hippie-expand)
 
 (add-hook 'prog-mode-hook  'rainbow-delimiters-mode)
-
-(defun turn-on-paredit () (paredit-mode t))
-
-(define-key paredit-mode-map (kbd "C-^") 'paredit-remove-newlines)
-(define-key paredit-mode-map (kbd "M-^") 'paredit-delete-indentation)
-
-(add-hook 'emacs-lisp-mode-hook       'turn-on-paredit)
-(add-hook 'lisp-mode-hook             'turn-on-paredit)
-(add-hook 'lisp-interaction-mode-hook 'turn-on-paredit)
-(add-hook 'scheme-mode-hook           'turn-on-paredit)
-(add-hook 'sibiliant-mode-hook        'turn-on-paredit)
 
 (defun beautify-json ()
   (interactive)

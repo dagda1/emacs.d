@@ -27,8 +27,7 @@
 (setq ring-bell-function 'ignore)
 
 ;;set tab width globally
-(setq-default indent-tabs-mode nil)
-(setq-default tab-width 2)
+;; (setq-default indent-tabs-mode nil)
 (setq css-indent-offset 2)
 
 ;; Always ALWAYS use UTF-8
@@ -107,9 +106,7 @@
 (setq-default show-trailing-whitespace t)
 (add-hook 'term-mode-hook (lambda () (setq show-trailing-whitespace nil)))
 (setq-default visible-bell 'top-bottom)
-(setq-default default-tab-width 2)
-(setq-default indent-tabs-mode nil)
-
+(setq tab-width 4)
 
 ;; Allow hash to be entered
 (global-set-key (kbd "M-3") '(lambda () (interactive) (insert "#")))
@@ -149,6 +146,8 @@
             (setq web-mode-markup-indent-offset 2)
             (setq web-mode-css-indent-offset 2)
             (setq web-mode-code-indent-offset 2)
+            (setq-default indent-tabs-mode nil)
+            (setq tab-width 2)
             (setq web-mode-enable-auto-quoting nil)
             (setq web-mode-enable-auto-pairing t)
             (setq web-mode-enable-css-colorization t)))
@@ -333,4 +332,4 @@
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (zenburn-theme yaml-mode web-mode use-package smex scss-mode sass-mode rainbow-mode rainbow-delimiters projectile markdown-mode magit key-chord json-mode git-gutter gist flycheck-hdevtools flx-ido exec-path-from-shell elein company ac-js2 smart-parens))))
+    (zenburn-theme yaml-mode web-mode use-package smex scss-mode sass-mode rainbow-mode rainbow-delimiters projectile markdown-mode magit key-chord json-mode git-gutter gist flycheck-hdevtools flx-ido exec-path-from-shell elein company))))

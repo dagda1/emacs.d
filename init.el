@@ -21,6 +21,9 @@
 
 (require 'nodejs-repl)
 
+(use-package scss-mode
+  :mode (("\\.scss\\'" . scss-mode)))
+
 (setq dired-use-ls-dired nil)
 
 (setq visible-bell nil) ;; The default
@@ -106,7 +109,7 @@
 (setq-default show-trailing-whitespace t)
 (add-hook 'term-mode-hook (lambda () (setq show-trailing-whitespace nil)))
 (setq-default visible-bell 'top-bottom)
-(setq tab-width 4)
+(setq tab-width 2)
 
 ;; Allow hash to be entered
 (global-set-key (kbd "M-3") '(lambda () (interactive) (insert "#")))
@@ -144,12 +147,13 @@
   :config (
            progn
             (setq web-mode-markup-indent-offset 2)
-            (setq web-mode-css-indent-offset 2)
+            (setq web-mode-scss-indent-offset 2)
             (setq web-mode-code-indent-offset 2)
             (setq-default indent-tabs-mode nil)
             (setq tab-width 2)
             (setq web-mode-enable-auto-quoting nil)
             (setq web-mode-enable-auto-pairing t)
+            (setq web-mode-scss-indent-offset 2)
             (setq web-mode-enable-css-colorization t)))
 
 (setq web-mode-content-types-alist
@@ -167,10 +171,24 @@
         ad-do-it)
     ad-do-it))
 
+
+(use-package rjsx-mode
+  :defer 1
+  :mode "\\.js[x]$")
+
+;; Tern
+(use-package tern
+  :defer 1
+  :init (autoload 'tern-mode "tern" nil t))
+
+(use-package company-tern
+  :defer 1
+  :config (add-to-list 'company-backends 'company-tern))
+
 (use-package smartparens
   :ensure t
   :init
-  (smartparens-global-mode)
+  (smartparens-global-mode 1)
   (show-smartparens-global-mode)
   (dolist (hook '(inferior-emacs-lisp-mode-hook
                   emacs-lisp-mode-hook))
@@ -184,6 +202,9 @@
 (add-hook 'web-mode-hook #'smartparens-mode)
 ;; (add-hook 'web-mode-hook 'smartparens-strict-mode)
 
+(add-hook 'web-mode-hook 'emmet-mode)
+(setq emmet-indentation 2)
+
 (setq js-indent-level 2)
 (setq jsx-indent-level 2)
 
@@ -194,7 +215,6 @@
 (use-package server)
 (unless (server-running-p)
   (server-start))
-
 
 (use-package color-theme
   :init
@@ -307,6 +327,23 @@
 
 (add-hook 'prog-mode-hook  'rainbow-delimiters-mode)
 
+(use-package rainbow-mode
+  :ensure t
+  :config
+  (add-hook 'prog-mode-hook #'rainbow-mode))
+
+(require 'rainbow-mode)
+(rainbow-mode +1)
+
+;; set indent to 2
+(setq css-indent-offset 2)
+
+(add-to-list 'auto-mode-alist '("\\.css\\'" . css-mode))
+(add-to-list 'auto-mode-alist '("\\.scss\\'" . css-mode))
+(add-to-list 'auto-mode-alist '("\\.sass\\'" . css-mode))
+
+(delete-selection-mode t)
+
 (defun beautify-json ()
   (interactive)
   (let ((b (if mark-active (min (point) (mark)) (point-min)))
@@ -317,6 +354,27 @@
 (setq company-dabbrev-downcase nil)
 
 (provide 'init)
+
+(require 'smartparens-config)
+(smartparens-global-mode 1)
+
+;; when you have a selection, typing text replaces it all.
+(delete-selection-mode t)
+
+;; nice scrolling
+(setq scroll-margin 0
+      scroll-conservatively 100000
+      scroll-preserve-screen-position 1)
+
+;; show matching paren
+(require 'paren)
+(setq show-paren-style 'parenthesis)
+(show-paren-mode +1)
+
+(use-package drag-stuff
+  :init (drag-stuff-global-mode 1)
+  :bind (("M-N" . drag-stuff-down)
+         ("M-P" . drag-stuff-up)))
 
 (put 'downcase-region 'disabled nil)
 (custom-set-faces
@@ -332,4 +390,4 @@
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (zenburn-theme yaml-mode web-mode use-package smex scss-mode sass-mode rainbow-mode rainbow-delimiters projectile markdown-mode magit key-chord json-mode git-gutter gist flycheck-hdevtools flx-ido exec-path-from-shell elein company))))
+    (drag-stuff rjsx-mode tern zenburn-theme yaml-mode web-mode use-package smex scss-mode sass-mode rainbow-mode rainbow-delimiters projectile markdown-mode magit key-chord json-mode git-gutter gist flycheck-hdevtools flx-ido exec-path-from-shell elein company))))

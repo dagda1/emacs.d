@@ -260,10 +260,6 @@
 (use-package yaml-mode
   :ensure t)
 
-(use-package rainbow-delimiters
-  :ensure t
-  :config
-  (add-hook 'prog-mode-hook #'rainbow-delimiters-mode))
 
 (use-package company
   :ensure t
@@ -327,13 +323,30 @@
 
 (add-hook 'prog-mode-hook  'rainbow-delimiters-mode)
 
+(use-package rainbow-identifiers
+  :ensure t
+  :init
+  (progn
+    (add-hook 'prog-mode-hook 'rainbow-identifiers-mode)
+    (setq rainbow-identifiers-choose-face-function 'rainbow-identifiers-cie-l*a*b*-choose-face
+          rainbow-identifiers-cie-l*a*b*-lightness 70
+          rainbow-identifiers-cie-l*a*b*-saturation 30
+          rainbow-identifiers-cie-l*a*b*-color-count 20
+          ;; override theme faces
+          rainbow-identifiers-faces-to-override '(highlight-quoted-symbol
+                                                  font-lock-variable-name-face
+                                                  font-lock-function-name-face
+                                                  font-lock-type-face
+                                                  js2-function-param
+                                                  js2-external-variable
+                                                  js2-instance-member
+                                                 js2-private-function-call))))
+
 (use-package rainbow-mode
   :ensure t
   :config
   (add-hook 'prog-mode-hook #'rainbow-mode))
 
-(require 'rainbow-mode)
-(rainbow-mode +1)
 
 ;; set indent to 2
 (setq css-indent-offset 2)
@@ -354,9 +367,6 @@
 (setq company-dabbrev-downcase nil)
 
 (provide 'init)
-
-(require 'smartparens-config)
-(smartparens-global-mode 1)
 
 ;; when you have a selection, typing text replaces it all.
 (delete-selection-mode t)

@@ -323,30 +323,10 @@
 
 (add-hook 'prog-mode-hook  'rainbow-delimiters-mode)
 
-(use-package rainbow-identifiers
-  :ensure t
-  :init
-  (progn
-    (add-hook 'prog-mode-hook 'rainbow-identifiers-mode)
-    (setq rainbow-identifiers-choose-face-function 'rainbow-identifiers-cie-l*a*b*-choose-face
-          rainbow-identifiers-cie-l*a*b*-lightness 70
-          rainbow-identifiers-cie-l*a*b*-saturation 30
-          rainbow-identifiers-cie-l*a*b*-color-count 20
-          ;; override theme faces
-          rainbow-identifiers-faces-to-override '(highlight-quoted-symbol
-                                                  font-lock-variable-name-face
-                                                  font-lock-function-name-face
-                                                  font-lock-type-face
-                                                  js2-function-param
-                                                  js2-external-variable
-                                                  js2-instance-member
-                                                 js2-private-function-call))))
-
 (use-package rainbow-mode
   :ensure t
   :config
   (add-hook 'prog-mode-hook #'rainbow-mode))
-
 
 ;; set indent to 2
 (setq css-indent-offset 2)
@@ -354,6 +334,7 @@
 (add-to-list 'auto-mode-alist '("\\.css\\'" . css-mode))
 (add-to-list 'auto-mode-alist '("\\.scss\\'" . css-mode))
 (add-to-list 'auto-mode-alist '("\\.sass\\'" . css-mode))
+
 
 (delete-selection-mode t)
 
@@ -382,9 +363,14 @@
 (show-paren-mode +1)
 
 (use-package drag-stuff
-  :init (drag-stuff-global-mode 1)
-  :bind (("M-N" . drag-stuff-down)
-         ("M-P" . drag-stuff-up)))
+  :demand t
+  :diminish drag-stuff-mode
+  :config
+  (progn
+    (drag-stuff-global-mode t)
+    (drag-stuff-define-keys)
+    (add-to-list 'drag-stuff-except-modes 'org-mode)
+    (add-to-list 'drag-stuff-except-modes 'rebase-mode)))
 
 (put 'downcase-region 'disabled nil)
 (custom-set-faces

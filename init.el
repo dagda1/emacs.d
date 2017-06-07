@@ -1,6 +1,6 @@
 (require 'package)
 (setq package-enable-at-startup nil)
-(add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
+(add-to-list 'packag-archives '("melpa" . "http://melpa.org/packages/"))
 (add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/"))
 (add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/"))
 (package-initialize)
@@ -135,6 +135,11 @@
 (add-hook 'yaml-mode-hook
           (lambda ()
             (define-key yaml-mode-map "\C-m" 'newline-and-indent)))
+
+(use-package ag
+  :commands (ag ag-files ag-regexp ag-project ag-dired helm-ag)
+  :config (setq ag-highlight-search t
+                ag-reuse-buffers t))
 
 (use-package web-mode
   :init (
@@ -386,4 +391,4 @@
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (drag-stuff rjsx-mode tern zenburn-theme yaml-mode web-mode use-package smex scss-mode sass-mode rainbow-mode rainbow-delimiters projectile markdown-mode magit key-chord json-mode git-gutter gist flycheck-hdevtools flx-ido exec-path-from-shell elein company))))
+    (ag zenburn-theme yaml-mode web-mode use-package smex scss-mode sass-mode rainbow-mode rainbow-delimiters projectile markdown-mode magit key-chord json-mode git-gutter gist flycheck-hdevtools flx-ido exec-path-from-shell elein company))))

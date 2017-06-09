@@ -1,6 +1,6 @@
 (require 'package)
 (setq package-enable-at-startup nil)
-(add-to-list 'packag-archives '("melpa" . "http://melpa.org/packages/"))
+(add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
 (add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/"))
 (add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/"))
 (package-initialize)
@@ -145,9 +145,9 @@
   :init (
          progn
           (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
-          (add-to-list 'auto-mode-alist '("\\.js[x]?$" . web-mode))
-          (add-to-list 'auto-mode-alist '("\\.css\\'"    . web-mode))
-          (add-to-list 'auto-mode-alist '("\\.scss\\'"   . web-mode))
+          (add-to-list 'auto-mode-alist '("\\.js[x]?$"  . web-mode))
+          (add-to-list 'auto-mode-alist '("\\.css\\'"   . web-mode))
+          (add-to-list 'auto-mode-alist '("\\.scss\\'"  . web-mode))
           )
   :config (
            progn
@@ -179,7 +179,7 @@
 
 (use-package rjsx-mode
   :defer 1
-  :mode "\\.js[x]$")
+  :mode "\\.js$")
 
 ;; Tern
 (use-package tern

@@ -180,12 +180,24 @@
 (use-package js2-mode
   :defer 1
   :mode "\\.js$"
+  :init
+  (defadvice js-jsx-indent-line (after js-jsx-indent-line-after-hack activate)
+    "Workaround sgml-mode and follow airbnb component style."
+    (let* ((cur-line (buffer-substring-no-properties
+		      (line-beginning-position)
+		      (line-end-position))))
+      (if (string-match "^\\( +\\)\/?> *$" cur-line)
+	  (let* ((empty-spaces (match-string 1 cur-line)))
+	    (replace-regexp empty-spaces
+			    (make-string (- (length empty-spaces) sgml-basic-offset) 32)
+			    nil
+			    (line-beginning-position) (line-end-position))))))
   :config
   (progn
     (add-to-list 'interpreter-mode-alist '("node" . js2-mode))
 
     (add-hook 'js2-mode-hook #'setup-tide-mode)
-    ;(add-hook 'js2-mode-hook #'tern-mode)
+    (add-hook 'js2-mode-hook #'tern-mode)
 
     (setq js2-basic-offset 2
           js2-bounce-indent-p t
@@ -215,7 +227,10 @@
 
 (use-package company-tern
   :defer 1
-  :config (add-to-list 'company-backends 'company-tern))
+  :config
+  (progn
+    (setq tern-command (append tern-command '("--no-port-file")))
+    (add-to-list 'company-backends 'company-tern)))
 
 (use-package smartparens
   :ensure t

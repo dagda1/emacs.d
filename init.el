@@ -141,45 +141,72 @@
   :config (setq ag-highlight-search t
                 ag-reuse-buffers t))
 
-(use-package web-mode
-  :init (
-         progn
-          (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
-          (add-to-list 'auto-mode-alist '("\\.js[x]?$"  . web-mode))
-          (add-to-list 'auto-mode-alist '("\\.css\\'"   . web-mode))
-          (add-to-list 'auto-mode-alist '("\\.scss\\'"  . web-mode))
-          )
-  :config (
-           progn
-            (setq web-mode-markup-indent-offset 2)
-            (setq web-mode-scss-indent-offset 2)
-            (setq web-mode-code-indent-offset 2)
-            (setq-default indent-tabs-mode nil)
-            (setq tab-width 2)
-            (setq web-mode-enable-auto-quoting nil)
-            (setq web-mode-enable-auto-pairing t)
-            (setq web-mode-scss-indent-offset 2)
-            (setq web-mode-enable-css-colorization t)))
+;; (use-package web-mode
+;;   :init (
+;;          progn
+;;           (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
+;;           (add-to-list 'auto-mode-alist '("\\.js[x]?$"  . web-mode))
+;;           (add-to-list 'auto-mode-alist '("\\.css\\'"   . web-mode))
+;;           (add-to-list 'auto-mode-alist '("\\.scss\\'"  . web-mode))
+;;           )
+;;   :config (
+;;            progn
+;;             (setq web-mode-markup-indent-offset 2)
+;;             (setq web-mode-scss-indent-offset 2)
+;;             (setq web-mode-code-indent-offset 2)
+;;             (setq-default indent-tabs-mode nil)
+;;             (setq tab-width 2)
+;;             (setq web-mode-enable-auto-quoting nil)
+;;             (setq web-mode-enable-auto-pairing t)
+;;             (setq web-mode-scss-indent-offset 2)
+;;             (setq web-mode-enable-css-colorization t)))
 
-(setq web-mode-content-types-alist
-      '(("jsx" . "/\\(container\\|component\\)[s]?/.*\\.js[x]?\\'")))
+;; (setq web-mode-content-types-alist
+;;       '(("jsx" . "/\\(container\\|component\\)[s]?/.*\\.js[x]?\\'")))
 
-(defadvice web-mode-highlight-part (around tweak-jsx activate)
-  (if (equal web-mode-content-type "jsx")
-      (let ((web-mode-enable-part-face nil))
-        ad-do-it)
-    ad-do-it))
+;; (defadvice web-mode-highlight-part (around tweak-jsx activate)
+;;   (if (equal web-mode-content-type "jsx")
+;;       (let ((web-mode-enable-part-face nil))
+;;         ad-do-it)
+;;     ad-do-it))
 
-(defadvice web-mode-highlight-part (around tweak-jsx activate)
-  (if (equal web-mode-content-type "js")
-      (let ((web-mode-enable-part-face nil))
-        ad-do-it)
-    ad-do-it))
+;; (defadvice web-mode-highlight-part (around tweak-jsx activate)
+;;   (if (equal web-mode-content-type "js")
+;;       (let ((web-mode-enable-part-face nil))
+;;         ad-do-it)
+;;     ad-do-it))
 
-
-(use-package rjsx-mode
+;; js2-mode
+(use-package js2-mode
   :defer 1
-  :mode "\\.js$")
+  :mode "\\.js$"
+  :config
+  (progn
+    (add-to-list 'interpreter-mode-alist '("node" . js2-mode))
+
+    (add-hook 'js2-mode-hook #'setup-tide-mode)
+    ;(add-hook 'js2-mode-hook #'tern-mode)
+
+    (setq js2-basic-offset 2
+          js2-bounce-indent-p t
+          js2-strict-missing-semi-warning nil
+          js2-concat-multiline-strings nil
+          js2-include-node-externs t
+          js2-skip-preprocessor-directives t
+          js2-strict-inconsistent-return-warning nil)))
+
+(use-package js2-refactor               ; Refactor JavaScript
+  :ensure t
+  :after js2-mode
+  :init (add-hook 'js2-mode-hook #'js2-refactor-mode)
+  :bind (:map j2-mode-map
+              ("C-k" . js2r-kill))
+  :config (js2r-add-keybindings-with-prefix "C-c m r"))
+
+
+(use-package rjsx-mode                  ; JSX mode
+  :ensure t
+  :mode ("\\.js\\'" . rjsx-mode))
 
 ;; Tern
 (use-package tern
@@ -201,14 +228,14 @@
   :config
   (require 'smartparens-config)
   (setq sp-autoskip-closing-pair 'always)
-  (sp-local-pair 'web-mode "<" nil :actions :rem)
+  ;; (sp-local-pair 'web-mode "<" nil :actions :rem)
   :diminish (smartparens-mode))
 
-(add-hook 'web-mode-hook #'smartparens-mode)
+;; (add-hook 'web-mode-hook #'smartparens-mode)
 ;; (add-hook 'web-mode-hook 'smartparens-strict-mode)
 
-(add-hook 'web-mode-hook 'emmet-mode)
-(setq emmet-indentation 2)
+;; (add-hook 'web-mode-hook 'emmet-mode)
+;; (setq emmet-indentation 2)
 
 (setq js-indent-level 2)
 (setq jsx-indent-level 2)
@@ -293,7 +320,7 @@
 (when (memq window-system '(mac ns))
   (exec-path-from-shell-initialize))
 
-(flycheck-add-mode 'javascript-eslint 'web-mode)
+;; (flycheck-add-mode 'javascript-eslint 'web-mode)
 
 (defun my/use-eslint-from-node-modules ()
   (let* ((root (locate-dominating-file
@@ -309,11 +336,11 @@
 
 (use-package ag)
 
-(setq-default web-mode-comment-formats (remove '("javascript" . "/*") web-mode-comment-formats))
-(add-to-list 'web-mode-comment-formats '("javascript" . "//"))
+;; (setq-default web-mode-comment-formats (remove '("javascript" . "/*") web-mode-comment-formats))
+;; (add-to-list 'web-mode-comment-formats '("javascript" . "//"))
 
-(setq-default web-mode-comment-formats
-              '(("javascript" . "//")))
+;; (setq-default web-mode-comment-formats
+;;               '(("javascript" . "//")))
 
 (use-package restclient
   :mode ("\\.http\\'" . restclient-mode))
@@ -391,4 +418,4 @@
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (ag zenburn-theme yaml-mode web-mode use-package smex scss-mode sass-mode rainbow-mode rainbow-delimiters projectile markdown-mode magit key-chord json-mode git-gutter gist flycheck-hdevtools flx-ido exec-path-from-shell elein company))))
+    (js2-refactor web-beautify js2-mode rjsx-mode ag zenburn-theme yaml-mode web-mode use-package smex scss-mode sass-mode rainbow-mode rainbow-delimiters projectile markdown-mode magit key-chord json-mode git-gutter gist flycheck-hdevtools flx-ido exec-path-from-shell elein company))))

@@ -196,7 +196,6 @@
   (progn
     (add-to-list 'interpreter-mode-alist '("node" . js2-mode))
 
-    (add-hook 'js2-mode-hook #'setup-tide-mode)
     (add-hook 'js2-mode-hook #'tern-mode)
 
     (setq js2-basic-offset 2
@@ -211,8 +210,6 @@
   :ensure t
   :after js2-mode
   :init (add-hook 'js2-mode-hook #'js2-refactor-mode)
-  :bind (:map j2-mode-map
-              ("C-k" . js2r-kill))
   :config (js2r-add-keybindings-with-prefix "C-c m r"))
 
 
@@ -433,4 +430,4 @@
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (js2-refactor web-beautify js2-mode rjsx-mode ag zenburn-theme yaml-mode web-mode use-package smex scss-mode sass-mode rainbow-mode rainbow-delimiters projectile markdown-mode magit key-chord json-mode git-gutter gist flycheck-hdevtools flx-ido exec-path-from-shell elein company))))
+    (rjsx-mode js2-refactor web-beautify js2-mode ag zenburn-theme yaml-mode web-mode use-package smex scss-mode sass-mode rainbow-mode rainbow-delimiters projectile markdown-mode magit key-chord json-mode git-gutter gist flycheck-hdevtools flx-ido exec-path-from-shell elein company))))

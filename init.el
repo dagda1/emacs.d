@@ -29,8 +29,6 @@
 (setq visible-bell nil) ;; The default
 (setq ring-bell-function 'ignore)
 
-;;set tab width globally
-;; (setq-default indent-tabs-mode nil)
 (setq css-indent-offset 2)
 
 ;; Always ALWAYS use UTF-8
@@ -141,41 +139,6 @@
   :config (setq ag-highlight-search t
                 ag-reuse-buffers t))
 
-;; (use-package web-mode
-;;   :init (
-;;          progn
-;;           (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
-;;           (add-to-list 'auto-mode-alist '("\\.js[x]?$"  . web-mode))
-;;           (add-to-list 'auto-mode-alist '("\\.css\\'"   . web-mode))
-;;           (add-to-list 'auto-mode-alist '("\\.scss\\'"  . web-mode))
-;;           )
-;;   :config (
-;;            progn
-;;             (setq web-mode-markup-indent-offset 2)
-;;             (setq web-mode-scss-indent-offset 2)
-;;             (setq web-mode-code-indent-offset 2)
-;;             (setq-default indent-tabs-mode nil)
-;;             (setq tab-width 2)
-;;             (setq web-mode-enable-auto-quoting nil)
-;;             (setq web-mode-enable-auto-pairing t)
-;;             (setq web-mode-scss-indent-offset 2)
-;;             (setq web-mode-enable-css-colorization t)))
-
-;; (setq web-mode-content-types-alist
-;;       '(("jsx" . "/\\(container\\|component\\)[s]?/.*\\.js[x]?\\'")))
-
-;; (defadvice web-mode-highlight-part (around tweak-jsx activate)
-;;   (if (equal web-mode-content-type "jsx")
-;;       (let ((web-mode-enable-part-face nil))
-;;         ad-do-it)
-;;     ad-do-it))
-
-;; (defadvice web-mode-highlight-part (around tweak-jsx activate)
-;;   (if (equal web-mode-content-type "js")
-;;       (let ((web-mode-enable-part-face nil))
-;;         ad-do-it)
-;;     ad-do-it))
-
 ;; js2-mode
 (use-package js2-mode
   :defer 1
@@ -217,6 +180,19 @@
   :ensure t
   :mode ("\\.js\\'" . rjsx-mode))
 
+(use-package prettier-js
+  :init
+  (add-hook 'js2-mode-hook 'prettier-js-mode)
+  :config
+  (setq prettier-js-args '(
+			   "--bracket-spacing" "true"
+			   "--single-quote" "true"
+			   "--trailing-comman" "none"
+			   "--jsx-parser-same-line" "false"
+			   "--parser" "flow"
+			   ))
+  )
+
 ;; Tern
 (use-package tern
   :defer 1
@@ -240,14 +216,7 @@
   :config
   (require 'smartparens-config)
   (setq sp-autoskip-closing-pair 'always)
-  ;; (sp-local-pair 'web-mode "<" nil :actions :rem)
   :diminish (smartparens-mode))
-
-;; (add-hook 'web-mode-hook #'smartparens-mode)
-;; (add-hook 'web-mode-hook 'smartparens-strict-mode)
-
-;; (add-hook 'web-mode-hook 'emmet-mode)
-;; (setq emmet-indentation 2)
 
 (setq js-indent-level 2)
 (setq jsx-indent-level 2)
@@ -332,8 +301,6 @@
 (when (memq window-system '(mac ns))
   (exec-path-from-shell-initialize))
 
-;; (flycheck-add-mode 'javascript-eslint 'web-mode)
-
 (defun my/use-eslint-from-node-modules ()
   (let* ((root (locate-dominating-file
                 (or (buffer-file-name) default-directory)
@@ -347,12 +314,6 @@
 (add-hook 'flycheck-mode-hook #'my/use-eslint-from-node-modules)
 
 (use-package ag)
-
-;; (setq-default web-mode-comment-formats (remove '("javascript" . "/*") web-mode-comment-formats))
-;; (add-to-list 'web-mode-comment-formats '("javascript" . "//"))
-
-;; (setq-default web-mode-comment-formats
-;;               '(("javascript" . "//")))
 
 (use-package restclient
   :mode ("\\.http\\'" . restclient-mode))
@@ -430,4 +391,4 @@
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (rjsx-mode js2-refactor web-beautify js2-mode ag zenburn-theme yaml-mode web-mode use-package smex scss-mode sass-mode rainbow-mode rainbow-delimiters projectile markdown-mode magit key-chord json-mode git-gutter gist flycheck-hdevtools flx-ido exec-path-from-shell elein company))))
+    (rjsx-mode js2-refactor web-beautify js2-mode ag zenburn-theme yaml-mode use-package smex scss-mode sass-mode rainbow-mode rainbow-delimiters projectile markdown-mode magit key-chord json-mode git-gutter gist flycheck-hdevtools flx-ido exec-path-from-shell elein company))))

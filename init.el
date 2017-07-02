@@ -139,50 +139,85 @@
   :config (setq ag-highlight-search t
                 ag-reuse-buffers t))
 
-;; js2-mode
-(use-package js2-mode
-  :defer 1
-  :mode "\\.js$"
-  :init
-  (defadvice js-jsx-indent-line (after js-jsx-indent-line-after-hack activate)
-    "Workaround sgml-mode and follow airbnb component style."
-    (let* ((cur-line (buffer-substring-no-properties
-		      (line-beginning-position)
-		      (line-end-position))))
-      (if (string-match "^\\( +\\)\/?> *$" cur-line)
-	  (let* ((empty-spaces (match-string 1 cur-line)))
-	    (replace-regexp empty-spaces
-			    (make-string (- (length empty-spaces) sgml-basic-offset) 32)
-			    nil
-			    (line-beginning-position) (line-end-position))))))
-  :config
-  (progn
-    (add-to-list 'interpreter-mode-alist '("node" . js2-mode))
+;; ;; js2-mode
+;; (use-package js2-mode
+;;   :defer 1
+;;   :mode "\\.js$"
+;;   :init
+;;   (defadvice js-jsx-indent-line (after js-jsx-indent-line-after-hack activate)
+;;     "Workaround sgml-mode and follow airbnb component style."
+;;     (let* ((cur-line (buffer-substring-no-properties
+;; 		      (line-beginning-position)
+;; 		      (line-end-position))))
+;;       (if (string-match "^\\( +\\)\/?> *$" cur-line)
+;; 	  (let* ((empty-spaces (match-string 1 cur-line)))
+;; 	    (replace-regexp empty-spaces
+;; 			    (make-string (- (length empty-spaces) sgml-basic-offset) 32)
+;; 			    nil
+;; 			    (line-beginning-position) (line-end-position))))))
+;;   :config
+;;   (progn
+;;     (add-to-list 'interpreter-mode-alist '("node" . js2-mode))
 
-    (add-hook 'js2-mode-hook #'tern-mode)
+;;     (add-hook 'js2-mode-hook #'tern-mode)
 
-    (setq js2-basic-offset 2
-          js2-bounce-indent-p t
-          js2-strict-missing-semi-warning nil
-          js2-concat-multiline-strings nil
-          js2-include-node-externs t
-          js2-skip-preprocessor-directives t
-          js2-strict-inconsistent-return-warning nil)))
+;;     (setq js2-basic-offset 2
+;;           js2-bounce-indent-p t
+;;           js2-strict-missing-semi-warning nil
+;;           js2-concat-multiline-strings nil
+;;           js2-include-node-externs t
+;;           js2-skip-preprocessor-directives t
+;;           js2-strict-inconsistent-return-warning nil)))
 
-(use-package js2-refactor               ; Refactor JavaScript
-  :ensure t
-  :after js2-mode
-  :init (add-hook 'js2-mode-hook #'js2-refactor-mode)
-  :config (js2r-add-keybindings-with-prefix "C-c m r"))
+;; (use-package js2-refactor               ; Refactor JavaScript
+;;   :ensure t
+;;   :after js2-mode
+;;   :init (add-hook 'js2-mode-hook #'js2-refactor-mode)
+;;   :config (js2r-add-keybindings-with-prefix "C-c m r"))
 
+(defun enable-minor-mode (my-pair)
+  "Enable minor mode if filename match the regexp.  MY-PAIR is a cons cell (regexp . minor-mode)."
+  (if (buffer-file-name)
+      (if (string-match (car my-pair) buffer-file-name)
+      (funcall (cdr my-pair)))))
 
-(use-package rjsx-mode                  ; JSX mode
-  :ensure t
-  :mode ("\\.js\\'" . rjsx-mode))
+(use-package web-mode
+  :init (
+         progn
+          (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
+          (add-to-list 'auto-mode-alist '("\\.js$"  . web-mode))
+          (add-to-list 'auto-mode-alist '("\\.css\\'"   . web-mode))
+          (add-to-list 'auto-mode-alist '("\\.scss\\'"  . web-mode))
+          )
+  :config (
+           progn
+	    (add-hook 'web-mode-hook 'flow-minor-enable-automatically)
+	    (add-hook 'web-mode-hook #'(lambda ()
+					 (enable-minor-mode
+					  '("\\.jsx?\\'" . prettier-js-mode))))
+            (setq web-mode-markup-indent-offset 2)
+            (setq web-mode-scss-indent-offset 2)
+            (setq web-mode-code-indent-offset 2)
+            (setq-default indent-tabs-mode nil)
+            (setq tab-width 2)
+            (setq web-mode-enable-auto-quoting nil)
+            (setq web-mode-enable-auto-pairing t)
+            (setq web-mode-scss-indent-offset 2)
+	    (setq web-mode-enable-css-colorization t)
+	    ))
+
+(setq web-mode-content-types-alist
+      '(("jsx" . "**.*.js")))
+
+(defadvice web-mode-highlight-part (around tweak-jsx activate)
+  (if (equal web-mode-content-type "jsx")
+      (let ((web-mode-enable-part-face nil))
+        ad-do-it)
+    ad-do-it))
 
 (use-package prettier-js
   :init
-  (add-hook 'js2-mode-hook 'prettier-js-mode)
+  (add-hook 'web-mode-hook 'prettier-js-mode)
   :config
   (setq prettier-js-args '(
 			   "--bracket-spacing" "true"
@@ -391,4 +426,4 @@
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (rjsx-mode js2-refactor web-beautify js2-mode ag zenburn-theme yaml-mode use-package smex scss-mode sass-mode rainbow-mode rainbow-delimiters projectile markdown-mode magit key-chord json-mode git-gutter gist flycheck-hdevtools flx-ido exec-path-from-shell elein company))))
+    (flow-minor-mode web-mode rjsx-mode js2-refactor web-beautify js2-mode ag zenburn-theme yaml-mode use-package smex scss-mode sass-mode rainbow-mode rainbow-delimiters projectile markdown-mode magit key-chord json-mode git-gutter gist flycheck-hdevtools flx-ido exec-path-from-shell elein company))))

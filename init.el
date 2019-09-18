@@ -6,8 +6,8 @@
 (package-initialize)
 
 (unless (package-installed-p 'use-package)
-  (package-refresh-contents)
   (package-install 'use-package))
+(require 'use-package)
 
 (eval-when-compile
   (require 'use-package))
@@ -19,10 +19,19 @@
 (require 'editorconfig)
 (editorconfig-mode 1)
 
-(require 'nodejs-repl)
+(defvar after-load-theme-hook nil
+  "Hook run after a color theme is loaded using `load-theme'.")
+(defadvice load-theme (after run-after-load-theme-hook activate)
+  "Run `after-load-theme-hook'."
+  (run-hooks 'after-load-theme-hook))
 
 (use-package scss-mode
   :mode (("\\.scss\\'" . scss-mode)))
+
+(use-package doom-themes
+  :ensure t
+  :config
+  (load-theme 'doom-one t))
 
 (setq dired-use-ls-dired nil)
 
@@ -264,10 +273,6 @@
 (unless (server-running-p)
   (server-start))
 
-(use-package color-theme
-  :init
-  (load-theme 'wombat))
-
 (set-frame-font "Monaco-14")
 
 (use-package projectile
@@ -333,9 +338,6 @@
   (append flycheck-disabled-checkers
           '(json-jsonlist)))
 
-(when (memq window-system '(mac ns))
-  (exec-path-from-shell-initialize))
-
 (defun my/use-eslint-from-node-modules ()
   (let* ((root (locate-dominating-file
                 (or (buffer-file-name) default-directory)
@@ -353,15 +355,19 @@
 (use-package restclient
   :mode ("\\.http\\'" . restclient-mode))
 
-(setq exec-path-from-shell-check-startup-files nil)
-
-(exec-path-from-shell-initialize)
-
 (setq ag-reuse-buffers 't)
 
 (global-set-key "\M-/" 'hippie-expand)
 
-(add-hook 'prog-mode-hook  'rainbow-delimiters-mode)
+(use-package rainbow-delimiters
+  :ensure t
+  :hook ((prod-mode . rainbow-delimiters-mode))
+  :custom
+  (rainbow-delimiters-max-face-count 1)
+  :config
+  (set-face-attribute 'rainbow-delimiters-unmatched-face nil
+                      :foreground 'unspecified
+                      :inherit 'error))
 
 (use-package rainbow-mode
   :ensure t
@@ -402,23 +408,13 @@
 (setq show-paren-style 'parenthesis)
 (show-paren-mode +1)
 
-(use-package drag-stuff
-  :demand t
-  :diminish drag-stuff-mode
-  :config
-  (progn
-    (drag-stuff-global-mode t)
-    (drag-stuff-define-keys)
-    (add-to-list 'drag-stuff-except-modes 'org-mode)
-    (add-to-list 'drag-stuff-except-modes 'rebase-mode)))
-
 (put 'downcase-region 'disabled nil)
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- )
+ '(default ((t (:background nil)))))
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -426,4 +422,4 @@
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (flow-minor-mode web-mode rjsx-mode js2-refactor web-beautify js2-mode ag zenburn-theme yaml-mode use-package smex scss-mode sass-mode rainbow-mode rainbow-delimiters projectile markdown-mode magit key-chord json-mode git-gutter gist flycheck-hdevtools flx-ido exec-path-from-shell elein company))))
+    (doom-themes color-theme-sanityinc-tomorrow yaml-mode web-mode use-package smex smartparens rainbow-mode rainbow-delimiters projectile markdown-mode magit flycheck flx-ido diminish company color-theme ag))))

@@ -93,6 +93,7 @@
 
 (global-linum-mode t)
 (global-hl-line-mode t)
+(global-auto-revert-mode -1)
 (setq inhibit-startup-message t)
 (setq x-underline-at-descent-line t)
 (when (fboundp 'tool-bar-mode) (tool-bar-mode -1))

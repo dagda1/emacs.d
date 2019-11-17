@@ -1,6 +1,7 @@
 (require 'package)
 (setq package-enable-at-startup nil)
-(add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
+(add-to-list 'package-archives
+             '("Melpa-stable" . "https://stable.melpa.org/packages/") t)
 (add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/"))
 (add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/"))
 (package-initialize)
@@ -148,42 +149,6 @@
   :commands (ag ag-files ag-regexp ag-project ag-dired helm-ag)
   :config (setq ag-highlight-search t
                 ag-reuse-buffers t))
-
-;; ;; js2-mode
-;; (use-package js2-mode
-;;   :defer 1
-;;   :mode "\\.js$"
-;;   :init
-;;   (defadvice js-jsx-indent-line (after js-jsx-indent-line-after-hack activate)
-;;     "Workaround sgml-mode and follow airbnb component style."
-;;     (let* ((cur-line (buffer-substring-no-properties
-;; 		      (line-beginning-position)
-;; 		      (line-end-position))))
-;;       (if (string-match "^\\( +\\)\/?> *$" cur-line)
-;; 	  (let* ((empty-spaces (match-string 1 cur-line)))
-;; 	    (replace-regexp empty-spaces
-;; 			    (make-string (- (length empty-spaces) sgml-basic-offset) 32)
-;; 			    nil
-;; 			    (line-beginning-position) (line-end-position))))))
-;;   :config
-;;   (progn
-;;     (add-to-list 'interpreter-mode-alist '("node" . js2-mode))
-
-;;     (add-hook 'js2-mode-hook #'tern-mode)
-
-;;     (setq js2-basic-offset 2
-;;           js2-bounce-indent-p t
-;;           js2-strict-missing-semi-warning nil
-;;           js2-concat-multiline-strings nil
-;;           js2-include-node-externs t
-;;           js2-skip-preprocessor-directives t
-;;           js2-strict-inconsistent-return-warning nil)))
-
-;; (use-package js2-refactor               ; Refactor JavaScript
-;;   :ensure t
-;;   :after js2-mode
-;;   :init (add-hook 'js2-mode-hook #'js2-refactor-mode)
-;;   :config (js2r-add-keybindings-with-prefix "C-c m r"))
 
 (defun enable-minor-mode (my-pair)
   "Enable minor mode if filename match the regexp.  MY-PAIR is a cons cell (regexp . minor-mode)."
@@ -362,9 +327,6 @@
 
 (use-package rainbow-delimiters
   :ensure t
-  :hook ((prod-mode . rainbow-delimiters-mode))
-  :custom
-  (rainbow-delimiters-max-face-count 1)
   :config
   (set-face-attribute 'rainbow-delimiters-unmatched-face nil
                       :foreground 'unspecified

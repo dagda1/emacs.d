@@ -32,7 +32,7 @@
 (use-package doom-themes
   :ensure t
   :config
-  (load-theme 'doom-one t))
+  (load-theme 'wombat t))
 
 (setq dired-use-ls-dired nil)
 
